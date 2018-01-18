@@ -70,16 +70,11 @@
 const Game = __webpack_require__(1);
 
 document.addEventListener('DOMContentLoaded', () => {
-  // debugger
   let gameCanvas = document.getElementById('game-canvas');
-  let ctx;
 
-  if (gameCanvas.getContext) {
-    ctx = gameCanvas.getContext('2d');
-    let game = new Game(12,12);
-    game.start(ctx);
-  }
-
+  let ctx = gameCanvas.getContext('2d');
+  const game = new Game();
+  game.start(ctx);
 });
 
 
@@ -109,24 +104,21 @@ class Game {
   draw(ctx) {
     ctx.fillStyle = "red";
     let c = new Circle(this.xDim,this.yDim,10,'blue');
-    // b.width = 25;
-    // b.height = 25;
-    // debugger
-    // ctx.drawImage(b, 0, 0, 600, 525);
-    ctx.fillRect(25, 25, 25, 25);
 
-    // b.draw(ctx);
+
+    ctx.fillRect(125, 125, 125, 125);
     c.draw(ctx);
 
     // debugger
+    ctx.clearRect(0, 0, 630, 680);
 
     const animateCallback = () => {
-      debugger
-      ctx.clearRect(0, 0, 620, 550);
+      this.renderBackground();
         if (this.xDim < 200 && this.yDim < 200 ) {
         this.xDim += 1;
         this.yDim += 1;
         this.draw(ctx);
+
       } else if (this.xDim >= 200 && this.yDim >= 200) {
         this.xDim = 1;
         this.yDim = 1;
@@ -135,10 +127,6 @@ class Game {
     };
 
     window.requestAnimationFrame(animateCallback);
-  }
-
-  moveCircle(c) {
-    c.moveRandom(this.xDim , this.yDim);
   }
 
 }
@@ -216,42 +204,35 @@ module.exports = Circle;
 
 class Background {
   contructor(posY, imageLength, speed) {
-
-    this.speed = 10;
-    this.y = posY;
-    this.totalSeconds = 10;
     this.x = 0;
-    this.imageLength = imageLength;
   }
 
 
   draw(ctx) {
-    debugger
-     this.image = new Image();
-     this.image.src = './images/background.gif';
-     ctx.drawImage(this.image, 0, 0);
+    this.image = new Image();
+    let context = ctx;
 
-    this.image.onLoad = () => {
-      debugger
+    this.image.onload = () => {
       let x = 0;
       let width = this.image.naturalWidth;
       let min = 0 - width;
       let count = 1;
 
       const loop = () => {
-        ctx.drawImage(this.image, this.x, 0);
-        ctx.drawImage(this.image, this.x + width * 2 ,0);
-        ctx.drawImage(this.image, this.x + width * 3, 0);
+        ctx.drawImage(this.image, x, 0);
+        ctx.drawImage(this.image, x + width * 1.001 ,0);
+        ctx.drawImage(this.image, x + width * 1.002, 0);
+
         x -= count;
         if (x < min ) {
           x = 0;
         }
       };
 
-
-      setInterval(loop,10);
+      setInterval(loop,5);
     };
 
+    this.image.src = './images/background.gif';
   }
 }
 

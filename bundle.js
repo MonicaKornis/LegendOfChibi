@@ -82,13 +82,13 @@ document.addEventListener('DOMContentLoaded', () => {
 /* 1 */
 /***/ (function(module, exports, __webpack_require__) {
 
-let Circle = __webpack_require__(2);
+let Player = __webpack_require__(4);
 let Background = __webpack_require__(3);
 
 class Game {
-  constructor(xDim, yDim) {
-    this.xDim = xDim;
-    this.yDim = yDim;
+  constructor() {
+    this.xDim = 12;
+    this.yDim = 12;
   }
 
   renderBackground(ctx) {
@@ -103,30 +103,27 @@ class Game {
 
   draw(ctx) {
     ctx.fillStyle = "red";
-    let c = new Circle(this.xDim,this.yDim,10,'blue');
-
-
-    ctx.fillRect(125, 125, 125, 125);
-    c.draw(ctx);
-
-    // debugger
+    // let c = new Circle(this.xDim,this.yDim,10,'red');
     ctx.clearRect(0, 0, 630, 680);
-
-    const animateCallback = () => {
-      this.renderBackground();
-        if (this.xDim < 200 && this.yDim < 200 ) {
-        this.xDim += 1;
-        this.yDim += 1;
-        this.draw(ctx);
-
-      } else if (this.xDim >= 200 && this.yDim >= 200) {
-        this.xDim = 1;
-        this.yDim = 1;
-        this.draw(ctx);
-      }
-    };
-
-    window.requestAnimationFrame(animateCallback);
+    // c.draw(ctx);
+    ctx.fillRect(125, 125, 125, 125);
+    // debugger
+    // const animateCallback = () => {
+    //   // debugger
+    //     if (this.xDim < 200 && this.yDim < 200 ) {
+    //     this.xDim += 1;
+    //     this.yDim += 1;
+    //     this.draw(ctx);
+    //
+    //   } else if (this.xDim >= 600 && this.yDim >= 600) {
+    //     this.xDim = 1;
+    //     this.yDim = 1;
+    //     this.draw(ctx);
+    //   }
+    // };
+    //
+    //
+    // window.requestAnimationFrame(animateCallback);
   }
 
 }
@@ -135,72 +132,11 @@ module.exports = Game;
 
 
 /***/ }),
-/* 2 */
-/***/ (function(module, exports) {
-
-class Circle {
-  constructor(centerX, centerY, radius, color) {
-    this.centerX = centerX;
-    this.centerY = centerY;
-    this.radius = radius;
-    this.color = color;
-  }
-
-  randomCircle(maxX, maxY, numCircles) {
-    return new Circle(
-      maxX * Math.random(),
-      maxY * Math.random(),
-      Circle.radius(maxX, maxY, numCircles),
-      this.randomColor()
-    );
-  }
-
-  radius(maxX, maxY, numCircles) {
-    let targetCircleArea = (maxX * maxY) / numCircles;
-    let targetRadius = Math.sqrt(targetCircleArea/ Math.PI);
-    return 2 * targetRadius;
-  }
-
-  randomColor() {
-    const hex = "0123456789ABCDEF";
-    let color = "#";
-    for (let i = 0; i < 6; i++) {
-      color += hex[Math.floor((Math.random() * 16))];
-    }
-    return color;
-  }
-
-  moveRandom(maxX, maxY) {
-    let dy = (Math.random() * 2) - 1;
-    let dx = (Math.random() * 2) - 1;
-
-    this.centerX = Math.abs((this.centerX + (dx * this.radius * .1)) % maxX);
-    this.centerY = Math.abs((this.centerY + (dx * this.radius * .1)) % maxY);
-  }
-
-  draw(ctx) {
-    ctx.fillStyle = this.color;
-    ctx.beginPath();
-
-    ctx.arc(
-      this.centerX,
-      this.centerY,
-      this.radius,
-      0,
-      2 * Math.PI,
-      false
-    );
-
-    ctx.fill();
-  }
-}
-
-module.exports = Circle;
-
-
-/***/ }),
+/* 2 */,
 /* 3 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
+
+let Player = __webpack_require__(4);
 
 class Background {
   contructor(posY, imageLength, speed) {
@@ -217,11 +153,16 @@ class Background {
       let width = this.image.naturalWidth;
       let min = 0 - width;
       let count = 1;
+      let c = new Player(110,110,10,'red');
 
       const loop = () => {
+        // debugger
         ctx.drawImage(this.image, x, 0);
         ctx.drawImage(this.image, x + width * 1.001 ,0);
         ctx.drawImage(this.image, x + width * 1.002, 0);
+        // ctx.drawImage(c,10,10,10,10);
+        ctx.fillRect(5, 555, 125, 125);
+        // c.draw(ctx);
 
         x -= count;
         if (x < min ) {
@@ -229,7 +170,7 @@ class Background {
         }
       };
 
-      setInterval(loop,5);
+      setInterval(loop,15);
     };
 
     this.image.src = './images/background.gif';
@@ -238,6 +179,70 @@ class Background {
 
 
 module.exports = Background;
+
+
+/***/ }),
+/* 4 */
+/***/ (function(module, exports) {
+
+class Player {
+  constructor(centerX, centerY, radius, color) {
+    this.points = 20;
+    this.centerX = 10;
+    this.centerY = 10;
+    // this.radius = 10;
+  }
+
+  // randomCircle(maxX, maxY, numCircles) {
+  //   return new Circle(
+  //     maxX * Math.random(),
+  //     maxY * Math.random(),
+  //     Circle.radius(maxX, maxY, numCircles),
+  //     this.randomColor()
+  //   );
+  // }
+
+  radius(maxX, maxY, numCircles) {
+    let targetCircleArea = (maxX * maxY) / numCircles;
+    let targetRadius = Math.sqrt(targetCircleArea/ Math.PI);
+    return 2 * targetRadius;
+  }
+
+  // randomColor() {
+  //   const hex = "0123456789ABCDEF";
+  //   let color = "#";
+  //   for (let i = 0; i < 6; i++) {
+  //     color += hex[Math.floor((Math.random() * 16))];
+  //   }
+  //   return color;
+  // }
+
+  moveRandom(maxX, maxY) {
+    let dy = (Math.random() * 2) - 1;
+    let dx = (Math.random() * 2) - 1;
+
+    this.centerX = Math.abs((this.centerX + (dx * this.radius * .1)) % maxX);
+    this.centerY = Math.abs((this.centerY + (dx * this.radius * .1)) % maxY);
+  }
+
+  draw(ctx) {
+    ctx.fillStyle = 'orange';
+    ctx.beginPath();
+
+    ctx.arc(
+      this.centerX,
+      this.centerY,
+      this.radius,
+      0,
+      2 * Math.PI,
+      false
+    );
+
+    ctx.fill();
+  }
+}
+
+module.exports = Player;
 
 
 /***/ })

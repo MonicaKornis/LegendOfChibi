@@ -71,10 +71,13 @@ const Game = __webpack_require__(1);
 
 document.addEventListener('DOMContentLoaded', () => {
   let gameCanvas = document.getElementById('game-canvas');
+  let backgroundCanvas = document.getElementById('background-canvas');
 
-  let ctx = gameCanvas.getContext('2d');
-  const game = new Game();
-  game.start(ctx);
+  let backgroundCtx = backgroundCanvas.getContext('2d');
+  let gameCtx = gameCanvas.getContext('2d');
+
+  const game = new Game(gameCtx, backgroundCtx);
+  game.start(gameCtx, backgroundCtx);
 });
 
 
@@ -86,7 +89,9 @@ let Player = __webpack_require__(4);
 let Background = __webpack_require__(3);
 
 class Game {
-  constructor() {
+  constructor(gameCtx,backgroundCtx) {
+    this.backgroundCtx = backgroundCtx;
+    this.gameCtx = gameCtx;
     this.xDim = 12;
     this.yDim = 12;
   }
@@ -96,34 +101,34 @@ class Game {
   }
 
 
-  start(ctx) {
-    this.renderBackground(ctx);
-    this.draw(ctx);
+  start(gameCtx,backgroundCtx) {
+    this.renderBackground(backgroundCtx);
+    this.draw(gameCtx);
   }
 
   draw(ctx) {
     ctx.fillStyle = "red";
-    // let c = new Circle(this.xDim,this.yDim,10,'red');
-    ctx.clearRect(0, 0, 630, 680);
-    // c.draw(ctx);
+    let c = new Player(this.xDim,this.yDim,2 * Math.PI,'red');
+    ctx.clearRect(125, 125, 125, 125);
+    c.draw(ctx);
     ctx.fillRect(125, 125, 125, 125);
     // debugger
-    // const animateCallback = () => {
-    //   // debugger
-    //     if (this.xDim < 200 && this.yDim < 200 ) {
-    //     this.xDim += 1;
-    //     this.yDim += 1;
-    //     this.draw(ctx);
-    //
-    //   } else if (this.xDim >= 600 && this.yDim >= 600) {
-    //     this.xDim = 1;
-    //     this.yDim = 1;
-    //     this.draw(ctx);
-    //   }
-    // };
-    //
-    //
-    // window.requestAnimationFrame(animateCallback);
+    const animateCallback = () => {
+      // debugger
+        if (this.xDim < 200 && this.yDim < 200 ) {
+        this.xDim += 1;
+        this.yDim += 1;
+        this.draw(ctx);
+
+      } else if (this.xDim >= 600 && this.yDim >= 600) {
+        this.xDim = 1;
+        this.yDim = 1;
+        this.draw(ctx);
+      }
+    };
+
+
+    window.requestAnimationFrame(animateCallback);
   }
 
 }
@@ -139,15 +144,14 @@ module.exports = Game;
 let Player = __webpack_require__(4);
 
 class Background {
-  contructor(posY, imageLength, speed) {
+  contructor() {
     this.x = 0;
   }
 
 
   draw(ctx) {
     this.image = new Image();
-    let context = ctx;
-
+    
     this.image.onload = () => {
       let x = 0;
       let width = this.image.naturalWidth;
@@ -208,14 +212,7 @@ class Player {
     return 2 * targetRadius;
   }
 
-  // randomColor() {
-  //   const hex = "0123456789ABCDEF";
-  //   let color = "#";
-  //   for (let i = 0; i < 6; i++) {
-  //     color += hex[Math.floor((Math.random() * 16))];
-  //   }
-  //   return color;
-  // }
+
 
   moveRandom(maxX, maxY) {
     let dy = (Math.random() * 2) - 1;

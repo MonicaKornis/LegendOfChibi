@@ -71,7 +71,6 @@ const Game = __webpack_require__(1);
 
 document.addEventListener('DOMContentLoaded', () => {
   let gameCanvas = document.getElementById('game-canvas');
-  gameCanvas.setAttribute('tabindex','0');
   let backgroundCanvas = document.getElementById('background-canvas');
 
   let backgroundCtx = backgroundCanvas.getContext('2d');
@@ -95,14 +94,17 @@ class Game {
   constructor(gameCtx,backgroundCtx,gameCanvas,backgroundCanvas) {
     this.player = new Player(12,12,2 * Math.PI,'red');
     this.tokens = [];
+    this.tokenCoords = [];
     this.backgroundCtx = backgroundCtx;
     this.gameCtx = gameCtx;
     this.gameCanvas = gameCanvas;
     this.backgroundCanvas = backgroundCanvas;
     this.jump = this.jump.bind(this);
     this.move = this.move.bind(this);
+    this.draw = this.draw.bind(this);
     this.renderTokens = this.renderTokens.bind(this);
     this.createTokens = this.createTokens.bind(this);
+    this.playerRecievePoints = this.playerRecievePoints.bind(this);
     this.createTokens();
     this.setEventListeners = this.setEventListeners.bind(this);
     this.setEventListeners();
@@ -119,11 +121,24 @@ class Game {
     }
   }
 
+  playerRecievePoints() {
+    // debugger
+    for (var i = 0; i < this.tokens.length; i++) {
+        if(this.tokens[i].xCoord <= this.player.centerX && this.player.centerX > this.tokens[i].xCoord ) {
+          console.log('WEEE');
+          this.player.points += this.tokens[i].points;
+          this.tokens = this.tokens.filter((currentToken) => currentToken.yCoord != this.tokens[i].yCoord);
+        }
+    }
+    console.log(this.player.points);
+  }
+
   renderTokens() {
       debugger
-      let gameCtx = this.gameCtx;
+    let gameCtx = this.gameCtx;
     this.tokens.forEach( function(token) {
-      debugger
+      // debugger
+      token.xCoord -= 10;
       token.draw(gameCtx);
     });
   }
@@ -134,16 +149,20 @@ class Game {
 
   move(e) {
     e.preventDefault();
-    // debugger
     if(e.code === 'ArrowDown') {
       this.player.moveDown(this.gameCtx);
+      this.draw(this.gameCtx);
     } else if (e.code === 'ArrowUp') {
       this.player.moveUp(this.gameCtx);
+      this.draw(this.gameCtx);
     } else if (e.code === 'ArrowLeft') {
       this.player.moveBack(this.gameCtx);
+      this.draw(this.gameCtx);
     } else if (e.code === 'ArrowRight') {
       this.player.moveFront(this.gameCtx);
+      this.draw(this.gameCtx);
     }
+    this.playerRecievePoints();
   }
 
   setEventListeners() {
@@ -152,15 +171,17 @@ class Game {
 
 
   start(gameCtx,backgroundCtx) {
-    debugger
+    // debugger
     this.renderBackground(backgroundCtx);
     this.draw(gameCtx);
-    this.renderTokens();
   }
 
   draw(ctx) {
-    ctx.clearRect(125, 125, 125, 125);
+    debugger
     this.player.draw(ctx);
+    this.renderTokens();
+    this.playerRecievePoints();
+
 
   }
 
@@ -181,7 +202,6 @@ class Background {
     this.x = 0;
   }
 
-
   draw(ctx) {
     this.image = new Image();
 
@@ -190,7 +210,6 @@ class Background {
       let width = this.image.naturalWidth;
       let min = 0 - width;
       let count = 1;
-      let c = new Player(110,110,10,'red',ctx);
 
       const loop = () => {
         // debugger
@@ -205,7 +224,7 @@ class Background {
         }
       };
 
-      setInterval(loop,5);
+      setInterval(loop,15);
     };
 
     this.image.src = './images/background.gif';
@@ -237,36 +256,31 @@ class Player {
   moveDown(ctx) {
     if (this.centerY < 650) {
     this.centerY += 20;
-    this.draw(ctx);
     }
   }
 
   moveUp(ctx) {
     if (this.centerY > 0) {
     this.centerY -= 20;
-    this.draw(ctx);
     }
   }
 
   moveBack(ctx) {
     if (this.centerX > 0 ) {
     this.centerX -= 20;
-    this.draw(ctx);
     }
   }
 
   moveFront(ctx) {
     if (this.centerX < 680) {
     this.centerX += 20;
-    this.draw(ctx);
     }
   }
 
 
-
   draw(ctx) {
     // debugger
-    ctx.clearRect(this.centerX-14,this.centerY-13,this.frameWidth+26,this.frameHeight+25);
+    ctx.clearRect(this.centerX-14,this.centerY-10,this.frameWidth+22,this.frameHeight+22);
     ctx.drawImage(this.spriteSheet,0,0,
     this.frameWidth, this.frameHeight, this.centerX, this.centerY,
     this.frameWidth, this.frameHeight);
@@ -303,25 +317,43 @@ class Token {
     this.points = points;
     this.ctx = ctx;
     this.tokenSheet = new Image();
+
+    this.tokenSheet.onload = () => {
+      this.tokenSheet.src = './images/foods.png';
+    };
+
     this.tokenSheet.src = './images/foods.png';
     this.width = 500/8;
     this.height = 61;
     this.startX = 1;
     this.xCoord = Math.floor(Math.random() * 650) + 100;
     this.yCoord = Math.floor(Math.random() * 620) + 15;
+    this.tokenCoords = [];
   }
 
   draw(ctx) {
     debugger
-    this.tokenSheet.onload = () => {
-      console.log(this.points * this.width);
+  //   this.tokenSheet.onload = () => {
+  //     ctx.drawImage(this.tokenSheet, this.points * this.width, 0,
+  //     this.width, this.height, this.xCoord, this.yCoord,
+  //     this.width/1.5, this.height/1.5);
+  //   };
+  // }
+  if(this.tokenSheet.src) {
+    }
+
+    const animateCallback = () => {
+    // debugger
+      ctx.clearRect(this.xCoord, this.yCoord, this.width, this.height);
       ctx.drawImage(this.tokenSheet, this.points * this.width, 0,
-      this.width, this.height, this.xCoord, this.yCoord,
-      this.width/1.5, this.height/1.5);
-
+        this.width, this.height, this.xCoord, this.yCoord,
+        this.width/1.5, this.height/1.5);
     };
-  }
 
+
+    window.requestAnimationFrame(animateCallback);
+
+  }
 }
 
 module.exports = Token;

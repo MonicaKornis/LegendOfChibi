@@ -71,12 +71,13 @@ const Game = __webpack_require__(1);
 
 document.addEventListener('DOMContentLoaded', () => {
   let gameCanvas = document.getElementById('game-canvas');
+  gameCanvas.setAttribute('tabindex','0');
   let backgroundCanvas = document.getElementById('background-canvas');
 
   let backgroundCtx = backgroundCanvas.getContext('2d');
   let gameCtx = gameCanvas.getContext('2d');
 
-  const game = new Game(gameCtx, backgroundCtx);
+  const game = new Game(gameCtx, backgroundCtx, gameCanvas, backgroundCanvas);
   game.start(gameCtx, backgroundCtx);
 });
 
@@ -87,48 +88,80 @@ document.addEventListener('DOMContentLoaded', () => {
 
 let Player = __webpack_require__(4);
 let Background = __webpack_require__(3);
+let Token = __webpack_require__(5);
+
 
 class Game {
-  constructor(gameCtx,backgroundCtx) {
+  constructor(gameCtx,backgroundCtx,gameCanvas,backgroundCanvas) {
+    this.player = new Player(12,12,2 * Math.PI,'red');
+    this.tokens = [];
     this.backgroundCtx = backgroundCtx;
     this.gameCtx = gameCtx;
-    this.xDim = 12;
-    this.yDim = 12;
+    this.gameCanvas = gameCanvas;
+    this.backgroundCanvas = backgroundCanvas;
+    this.jump = this.jump.bind(this);
+    this.move = this.move.bind(this);
+    this.renderTokens = this.renderTokens.bind(this);
+    this.createTokens = this.createTokens.bind(this);
+    this.createTokens();
+    this.setEventListeners = this.setEventListeners.bind(this);
+    this.setEventListeners();
+    this.aliens = [];
   }
 
   renderBackground(ctx) {
     new Background(0,0).draw(ctx);
   }
 
+  createTokens(ctx) {
+    for (let i = 0; i < 8; i++) {
+      this.tokens.push( new Token(this.gameCtx,i));
+    }
+  }
+
+  renderTokens() {
+      debugger
+      let gameCtx = this.gameCtx;
+    this.tokens.forEach( function(token) {
+      debugger
+      token.draw(gameCtx);
+    });
+  }
+
+  jump(){
+    this.player.toggleJump(this.gameCtx);
+  }
+
+  move(e) {
+    e.preventDefault();
+    // debugger
+    if(e.code === 'ArrowDown') {
+      this.player.moveDown(this.gameCtx);
+    } else if (e.code === 'ArrowUp') {
+      this.player.moveUp(this.gameCtx);
+    } else if (e.code === 'ArrowLeft') {
+      this.player.moveBack(this.gameCtx);
+    } else if (e.code === 'ArrowRight') {
+      this.player.moveFront(this.gameCtx);
+    }
+  }
+
+  setEventListeners() {
+    window.addEventListener('keydown', this.move);
+  }
+
 
   start(gameCtx,backgroundCtx) {
+    debugger
     this.renderBackground(backgroundCtx);
     this.draw(gameCtx);
+    this.renderTokens();
   }
 
   draw(ctx) {
-    ctx.fillStyle = "red";
-    let c = new Player(this.xDim,this.yDim,2 * Math.PI,'red');
     ctx.clearRect(125, 125, 125, 125);
-    c.draw(ctx);
-    ctx.fillRect(125, 125, 125, 125);
-    // debugger
-    const animateCallback = () => {
-      // debugger
-        if (this.xDim < 200 && this.yDim < 200 ) {
-        this.xDim += 1;
-        this.yDim += 1;
-        this.draw(ctx);
+    this.player.draw(ctx);
 
-      } else if (this.xDim >= 600 && this.yDim >= 600) {
-        this.xDim = 1;
-        this.yDim = 1;
-        this.draw(ctx);
-      }
-    };
-
-
-    window.requestAnimationFrame(animateCallback);
   }
 
 }
@@ -151,22 +184,20 @@ class Background {
 
   draw(ctx) {
     this.image = new Image();
-    
+
     this.image.onload = () => {
       let x = 0;
       let width = this.image.naturalWidth;
       let min = 0 - width;
       let count = 1;
-      let c = new Player(110,110,10,'red');
+      let c = new Player(110,110,10,'red',ctx);
 
       const loop = () => {
         // debugger
         ctx.drawImage(this.image, x, 0);
         ctx.drawImage(this.image, x + width * 1.001 ,0);
         ctx.drawImage(this.image, x + width * 1.002, 0);
-        // ctx.drawImage(c,10,10,10,10);
-        ctx.fillRect(5, 555, 125, 125);
-        // c.draw(ctx);
+
 
         x -= count;
         if (x < min ) {
@@ -174,7 +205,7 @@ class Background {
         }
       };
 
-      setInterval(loop,15);
+      setInterval(loop,5);
     };
 
     this.image.src = './images/background.gif';
@@ -190,56 +221,110 @@ module.exports = Background;
 /***/ (function(module, exports) {
 
 class Player {
-  constructor(centerX, centerY, radius, color) {
+  constructor(centerX, centerY, radius, color, ctx) {
+    this.spriteSheet = new Image();
+    this.spriteSheet.src = './images/cat.png';
     this.points = 20;
-    this.centerX = 10;
-    this.centerY = 10;
-    // this.radius = 10;
+    this.centerX = 100;
+    this.centerY = 550;
+    this.radius = 30;
+    this.jumping = false;
+    this.jumpCount = 0;
+    this.frameWidth = 959/12;
+    this.frameHeight = 73;
   }
 
-  // randomCircle(maxX, maxY, numCircles) {
-  //   return new Circle(
-  //     maxX * Math.random(),
-  //     maxY * Math.random(),
-  //     Circle.radius(maxX, maxY, numCircles),
-  //     this.randomColor()
-  //   );
-  // }
+  moveDown(ctx) {
+    if (this.centerY < 650) {
+    this.centerY += 20;
+    this.draw(ctx);
+    }
+  }
 
-  radius(maxX, maxY, numCircles) {
-    let targetCircleArea = (maxX * maxY) / numCircles;
-    let targetRadius = Math.sqrt(targetCircleArea/ Math.PI);
-    return 2 * targetRadius;
+  moveUp(ctx) {
+    if (this.centerY > 0) {
+    this.centerY -= 20;
+    this.draw(ctx);
+    }
+  }
+
+  moveBack(ctx) {
+    if (this.centerX > 0 ) {
+    this.centerX -= 20;
+    this.draw(ctx);
+    }
+  }
+
+  moveFront(ctx) {
+    if (this.centerX < 680) {
+    this.centerX += 20;
+    this.draw(ctx);
+    }
   }
 
 
-
-  moveRandom(maxX, maxY) {
-    let dy = (Math.random() * 2) - 1;
-    let dx = (Math.random() * 2) - 1;
-
-    this.centerX = Math.abs((this.centerX + (dx * this.radius * .1)) % maxX);
-    this.centerY = Math.abs((this.centerY + (dx * this.radius * .1)) % maxY);
-  }
 
   draw(ctx) {
-    ctx.fillStyle = 'orange';
-    ctx.beginPath();
+    // debugger
+    ctx.clearRect(this.centerX-14,this.centerY-13,this.frameWidth+26,this.frameHeight+25);
+    ctx.drawImage(this.spriteSheet,0,0,
+    this.frameWidth, this.frameHeight, this.centerX, this.centerY,
+    this.frameWidth, this.frameHeight);
 
-    ctx.arc(
-      this.centerX,
-      this.centerY,
-      this.radius,
-      0,
-      2 * Math.PI,
-      false
-    );
 
-    ctx.fill();
+    // const animateCallback = () => {
+    //   // debugger
+    //     if (this.xDim < 200 && this.yDim < 200 ) {
+    //     this.xDim += 1;
+    //     this.yDim += 1;
+    //     this.draw(ctx);
+    //
+    //   } else if (this.xDim >= 600 && this.yDim >= 600) {
+    //     this.xDim = 1;
+    //     this.yDim = 1;
+    //     this.draw(ctx);
+    //   }
+    // };
+    //
+    //
+    // window.requestAnimationFrame(animateCallback);
   }
 }
 
 module.exports = Player;
+
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports) {
+
+class Token {
+  constructor(ctx,points){
+    this.points = points;
+    this.ctx = ctx;
+    this.tokenSheet = new Image();
+    this.tokenSheet.src = './images/foods.png';
+    this.width = 500/8;
+    this.height = 61;
+    this.startX = 1;
+    this.xCoord = Math.floor(Math.random() * 650) + 100;
+    this.yCoord = Math.floor(Math.random() * 620) + 15;
+  }
+
+  draw(ctx) {
+    debugger
+    this.tokenSheet.onload = () => {
+      console.log(this.points * this.width);
+      ctx.drawImage(this.tokenSheet, this.points * this.width, 0,
+      this.width, this.height, this.xCoord, this.yCoord,
+      this.width/1.5, this.height/1.5);
+
+    };
+  }
+
+}
+
+module.exports = Token;
 
 
 /***/ })

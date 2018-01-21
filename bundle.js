@@ -96,6 +96,7 @@ class Game {
     this.alien = new Alien();
     this.tokens = [];
     this.gameCtx = gameCtx;
+    this.background = new Background(0, 0);
     this.backgroundCtx = backgroundCtx;
     this.start = this.start.bind(this);
     this.gameCanvas = gameCanvas;
@@ -112,7 +113,7 @@ class Game {
   }
 //
   renderBackground() {
-    new Background(0,0).draw(this.backgroundCtx);
+    this.background.draw(this.backgroundCtx);
   }
 
   createTokens() {
@@ -179,7 +180,7 @@ class Game {
   }
 
   draw() {
-    debugger
+    // debugger
     this.gameCtx.clearRect(0,0,350,100);
     this.player.draw(this.gameCtx);
     this.playerRecievePoints();
@@ -205,7 +206,7 @@ module.exports = Game;
 let Player = __webpack_require__(4);
 
 class Background {
-  contructor() {
+  constructor() {
     this.x = 0;
   }
 
@@ -213,30 +214,26 @@ class Background {
   draw(ctx) {
     this.image = new Image();
 
-    this.image.onload = () => {
-      let x = 0;
+    this.image.onload = function() {
+      // let x = 0;
       let width = this.image.naturalWidth;
       let min = 0 - width;
       let count = 1;
 
-
       const loop = () => {
         // debugger
-        ctx.drawImage(this.image, x, 0);
-        ctx.drawImage(this.image, x + width * 1.001 ,0);
-        ctx.drawImage(this.image, x + width * 1.002, 0);
-        // ctx.drawImage(c,10,10,10,10);
-        // ctx.fillRect(5, 555, 125, 125);
-        // c.draw(ctx);
+        ctx.drawImage(this.image, this.x, 0);
+        ctx.drawImage(this.image, this.x + width * 1.001 ,0);
+        ctx.drawImage(this.image, this.x + width * 1.002, 0);
 
-        x -= count;
-        if (x < min ) {
-          x = 0;
+        this.x -= count;
+        if (this.x < min ) {
+          this.x = 0;
         }
       };
 
-      setInterval(loop,17);
-    };
+      this.interval = this.interval || setInterval(loop.bind(this),17);
+    }.bind(this);
 
     this.image.src = './images/background.gif';
   }
@@ -351,10 +348,6 @@ class Alien {
   constructor() {
     this.alienSheet = new Image();
     this.alienSheet.src = './images/alien.png';
-    // this.alienSheet.onload = () => {
-    //
-    //   this.alienSheet.src = './images/alien.png';
-    // };
     this.width = 190/3;
     this.height = 64;
     this.frame = 0;

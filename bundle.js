@@ -106,9 +106,15 @@ class Game {
     this.renderTokens = this.renderTokens.bind(this);
     this.createTokens = this.createTokens.bind(this);
     this.playerRecievePoints = this.playerRecievePoints.bind(this);
-    this.createTokens();
+    this.createTokens(8);
     this.setEventListeners();
+    debugger
     this.aliens = [];
+    this.fps = 30;
+    this.now;
+    this.then = Date.now();
+    this.interval = 1500/this.fps;
+    this.delta;
 
   }
 //
@@ -116,8 +122,8 @@ class Game {
     this.background.draw(this.backgroundCtx);
   }
 
-  createTokens() {
-    for (let i = 0; i < 8; i++) {
+  createTokens(num) {
+    for (let i = 0; i < num; i++) {
       this.tokens.push( new Token(this.gameCtx,i));
     }
   }
@@ -136,19 +142,18 @@ class Game {
   }
 
   renderTokens(gameCtx) {
-    // let x = 0;
-    // let width = 680;
-    // let min = 0 - width;
-    // let count = 1;
-    // const loop = () => {
       this.tokens.forEach( function(token) {
         token.xCoord -= 1;
         token.draw(gameCtx);
       });
-    // };
-
-      // setInterval(loop,1017);
   }
+
+  createMoreTokens() {
+    if(this.tokens.length < 3 ) {
+      this.createTokens(4);
+    }
+  }
+
 
 
   move(e) {
@@ -172,16 +177,23 @@ class Game {
 
   start(ctx) {
     // debugger
-    this.renderBackground(this.backgroundCtx);
-    this.draw(this.gameCtx);
-    this.renderTokens(this.gameCtx);
-    this.alien.draw(this.gameCtx);
     requestAnimationFrame(this.start);
+    let now = Date.now();
+    this.delta = now - this.then;
+
+    if (this.delta > this.interval) {
+        this.gameCtx.clearRect(0,0,680,650);
+        this.renderBackground(this.backgroundCtx);
+        this.draw(this.gameCtx);
+        this.renderTokens(this.gameCtx);
+        this.alien.draw(this.gameCtx);
+        this.then = now - (this.delta % this.interval);
+      }
+    this.createMoreTokens();
   }
 
   draw() {
     // debugger
-    this.gameCtx.clearRect(0,0,350,100);
     this.player.draw(this.gameCtx);
     this.playerRecievePoints();
     this.gameCtx.font = `48px sans-serif`;
@@ -218,10 +230,11 @@ class Background {
       // let x = 0;
       let width = this.image.naturalWidth;
       let min = 0 - width;
-      let count = 1;
+      let count = 3;
 
       const loop = () => {
         // debugger
+
         ctx.drawImage(this.image, this.x, 0);
         ctx.drawImage(this.image, this.x + width * 1.001 ,0);
         ctx.drawImage(this.image, this.x + width * 1.002, 0);
@@ -250,12 +263,6 @@ module.exports = Background;
 class Player {
   constructor(centerX, centerY, radius, color, ctx) {
     this.spriteSheet = new Image();
-
-    // this.spriteSheet.onload = () => {
-    //
-    //   this.spriteSheet.src = './images/cat.png';
-    // };
-
     this.spriteSheet.src = './images/cat.png';
     this.points = 20;
     this.centerX = 100;
@@ -290,7 +297,6 @@ class Player {
 
 
   draw(ctx) {
-    ctx.clearRect(this.centerX-14,this.centerY-10,this.frameWidth+22,this.frameHeight+22);
     ctx.drawImage(this.spriteSheet,0,0,
     this.frameWidth, this.frameHeight, this.centerX, this.centerY,
     this.frameWidth, this.frameHeight);
@@ -327,7 +333,6 @@ class Token {
 
   draw(ctx) {
     if(this.tokenSheet.src) {
-      ctx.clearRect(this.xCoord, this.yCoord, this.width, this.height);
       ctx.drawImage(this.tokenSheet, this.points * this.width, 0,
       this.width, this.height, this.xCoord, this.yCoord,
       this.width/1.5, this.height/1.5);
@@ -359,7 +364,7 @@ class Alien {
       ctx.clearRect(400,500, this.frameWidth, this.frameHeight);
       ctx.drawImage(this.alienSheet,this.width*this.frame,0,
       this.width, this.height, 400,500,this.width, this.height);
-      if(this.frame > 3) {
+      if(this.frame < 3) {
         this.frame += 1;
       } else {
         this.frame = 0;

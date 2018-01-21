@@ -72,12 +72,12 @@ const Game = __webpack_require__(1);
 document.addEventListener('DOMContentLoaded', () => {
   let gameCanvas = document.getElementById('game-canvas');
   let backgroundCanvas = document.getElementById('background-canvas');
-
   let backgroundCtx = backgroundCanvas.getContext('2d');
   let gameCtx = gameCanvas.getContext('2d');
 
   const game = new Game(gameCtx, backgroundCtx, gameCanvas, backgroundCanvas);
-  game.start(gameCtx, backgroundCtx);
+  // debugger
+  game.start();
 });
 
 
@@ -88,18 +88,18 @@ document.addEventListener('DOMContentLoaded', () => {
 let Player = __webpack_require__(4);
 let Background = __webpack_require__(3);
 let Token = __webpack_require__(5);
-
+let Alien = __webpack_require__(7);
 
 class Game {
   constructor(gameCtx,backgroundCtx,gameCanvas,backgroundCanvas) {
     this.player = new Player(12,12,2 * Math.PI,'red');
+    this.alien = new Alien();
     this.tokens = [];
-    this.backgroundCtx = backgroundCtx;
     this.gameCtx = gameCtx;
+    this.backgroundCtx = backgroundCtx;
     this.start = this.start.bind(this);
     this.gameCanvas = gameCanvas;
     this.backgroundCanvas = backgroundCanvas;
-    this.jump = this.jump.bind(this);
     this.move = this.move.bind(this);
     this.draw = this.draw.bind(this);
     this.renderTokens = this.renderTokens.bind(this);
@@ -108,14 +108,14 @@ class Game {
     this.createTokens();
     this.setEventListeners();
     this.aliens = [];
-    this.renderTokens();
+
   }
 //
-  renderBackground(ctx) {
+  renderBackground() {
     new Background(0,0).draw(this.backgroundCtx);
   }
 
-  createTokens(ctx) {
+  createTokens() {
     for (let i = 0; i < 8; i++) {
       this.tokens.push( new Token(this.gameCtx,i));
     }
@@ -134,44 +134,32 @@ class Game {
 
   }
 
-  renderTokens() {
-    let x = 0;
-    let width = 680;
-    let min = 0 - width;
-    let count = 1;
-    let gameCtx = this.gameCtx;
-
-    const loop = () => {
-        this.tokens.forEach( function(token) {
-        token.xCoord = x + width;
+  renderTokens(gameCtx) {
+    // let x = 0;
+    // let width = 680;
+    // let min = 0 - width;
+    // let count = 1;
+    // const loop = () => {
+      this.tokens.forEach( function(token) {
+        token.xCoord -= 1;
         token.draw(gameCtx);
-
-        x -= count;
-
       });
-    };
+    // };
 
-      setInterval(loop,117);
+      // setInterval(loop,1017);
   }
 
-  jump(){
-    this.player.toggleJump(this.gameCtx);
-  }
 
   move(e) {
     e.preventDefault();
     if(e.code === 'ArrowDown') {
       this.player.moveDown(this.gameCtx);
-      this.draw(this.gameCtx);
     } else if (e.code === 'ArrowUp') {
       this.player.moveUp(this.gameCtx);
-      this.draw(this.gameCtx);
     } else if (e.code === 'ArrowLeft') {
       this.player.moveBack(this.gameCtx);
-      this.draw(this.gameCtx);
     } else if (e.code === 'ArrowRight') {
       this.player.moveFront(this.gameCtx);
-      this.draw(this.gameCtx);
     }
     this.playerRecievePoints();
   }
@@ -181,23 +169,26 @@ class Game {
   }
 
 
-  start(gameCtx,backgroundCtx) {
-    this.renderBackground(backgroundCtx);
-    this.draw(gameCtx);
-    window.requestAnimationFrame(this.start);
+  start(ctx) {
+    // debugger
+    this.renderBackground(this.backgroundCtx);
+    this.draw(this.gameCtx);
+    this.renderTokens(this.gameCtx);
+    this.alien.draw(this.gameCtx);
+    requestAnimationFrame(this.start);
   }
 
-  draw(ctx) {
-    // debugger
-    ctx.clearRect(0,0,350,100);
-    this.player.draw(ctx);
+  draw() {
+    debugger
+    this.gameCtx.clearRect(0,0,350,100);
+    this.player.draw(this.gameCtx);
     this.playerRecievePoints();
     this.gameCtx.font = `48px sans-serif`;
-    let gradient = ctx.createLinearGradient(0,0,this.gameCanvas.width,0);
+    let gradient = this.gameCtx.createLinearGradient(0,0,this.gameCanvas.width,0);
     gradient.addColorStop("0","magenta");
     gradient.addColorStop("0.5","yellow");
     gradient.addColorStop("1.0","red");
-    ctx.fillStyle = gradient;
+    this.gameCtx.fillStyle = gradient;
     this.gameCtx.fillText(`Life points: ${this.player.points}`, 10, 50);
   }
 
@@ -234,6 +225,9 @@ class Background {
         ctx.drawImage(this.image, x, 0);
         ctx.drawImage(this.image, x + width * 1.001 ,0);
         ctx.drawImage(this.image, x + width * 1.002, 0);
+        // ctx.drawImage(c,10,10,10,10);
+        // ctx.fillRect(5, 555, 125, 125);
+        // c.draw(ctx);
 
         x -= count;
         if (x < min ) {
@@ -259,6 +253,12 @@ module.exports = Background;
 class Player {
   constructor(centerX, centerY, radius, color, ctx) {
     this.spriteSheet = new Image();
+
+    // this.spriteSheet.onload = () => {
+    //
+    //   this.spriteSheet.src = './images/cat.png';
+    // };
+
     this.spriteSheet.src = './images/cat.png';
     this.points = 20;
     this.centerX = 100;
@@ -335,12 +335,46 @@ class Token {
       this.width, this.height, this.xCoord, this.yCoord,
       this.width/1.5, this.height/1.5);
     }
-
-
   }
+
 }
 
 module.exports = Token;
+
+
+/***/ }),
+/* 6 */,
+/* 7 */
+/***/ (function(module, exports) {
+
+class Alien {
+  constructor() {
+    this.alienSheet = new Image();
+    this.alienSheet.src = './images/alien.png';
+    // this.alienSheet.onload = () => {
+    //
+    //   this.alienSheet.src = './images/alien.png';
+    // };
+    this.width = 190/3;
+    this.height = 64;
+    this.frame = 0;
+    this.draw = this.draw.bind(this);
+  }
+
+  draw(ctx) {
+    // debugger
+      ctx.clearRect(400,500, this.frameWidth, this.frameHeight);
+      ctx.drawImage(this.alienSheet,this.width*this.frame,0,
+      this.width, this.height, 400,500,this.width, this.height);
+      if(this.frame > 3) {
+        this.frame += 1;
+      } else {
+        this.frame = 0;
+      }
+    }
+}
+
+module.exports = Alien;
 
 
 /***/ })

@@ -97,6 +97,7 @@ class Game {
     this.tokenCoords = [];
     this.backgroundCtx = backgroundCtx;
     this.gameCtx = gameCtx;
+    this.start = this.start.bind(this);
     this.gameCanvas = gameCanvas;
     this.backgroundCanvas = backgroundCanvas;
     this.jump = this.jump.bind(this);
@@ -106,13 +107,13 @@ class Game {
     this.createTokens = this.createTokens.bind(this);
     this.playerRecievePoints = this.playerRecievePoints.bind(this);
     this.createTokens();
-    this.setEventListeners = this.setEventListeners.bind(this);
     this.setEventListeners();
     this.aliens = [];
+    this.renderTokens();
   }
 
   renderBackground(ctx) {
-    new Background(0,0).draw(ctx);
+    new Background(0,0).draw(this.backgroundCtx);
   }
 
   createTokens(ctx) {
@@ -134,13 +135,27 @@ class Game {
   }
 
   renderTokens() {
-      debugger
-    let gameCtx = this.gameCtx;
-    this.tokens.forEach( function(token) {
+    let x = 0;
+    let width = 680;
+    let min = 0 - width;
+    let count = 1;
       // debugger
-      token.xCoord -= 10;
-      token.draw(gameCtx);
-    });
+    let gameCtx = this.gameCtx;
+    const loop = () => {
+      this.tokens.forEach( function(token) {
+
+
+        token.xCoord = x + width;
+        token.draw(gameCtx);
+
+        x -= count;
+        if (x < min ) {
+          x = 0;
+        }
+      });
+    };
+
+      setInterval(loop,117);
   }
 
   jump(){
@@ -174,15 +189,21 @@ class Game {
     // debugger
     this.renderBackground(backgroundCtx);
     this.draw(gameCtx);
+    window.requestAnimationFrame(this.start);
   }
 
   draw(ctx) {
-    debugger
+    // debugger
+    ctx.clearRect(0,0,350,100);
     this.player.draw(ctx);
-    this.renderTokens();
     this.playerRecievePoints();
-
-
+    this.gameCtx.font = `48px sans-serif`;
+    let gradient = ctx.createLinearGradient(0,0,this.gameCanvas.width,0);
+    gradient.addColorStop("0","magenta");
+    gradient.addColorStop("0.5","yellow");
+    gradient.addColorStop("1.0","red");
+    ctx.fillStyle = gradient;
+    this.gameCtx.fillText(`Life points: ${this.player.points}`, 10, 50);
   }
 
 }
@@ -202,6 +223,7 @@ class Background {
     this.x = 0;
   }
 
+
   draw(ctx) {
     this.image = new Image();
 
@@ -211,12 +233,12 @@ class Background {
       let min = 0 - width;
       let count = 1;
 
+
       const loop = () => {
         // debugger
         ctx.drawImage(this.image, x, 0);
         ctx.drawImage(this.image, x + width * 1.001 ,0);
         ctx.drawImage(this.image, x + width * 1.002, 0);
-
 
         x -= count;
         if (x < min ) {
@@ -224,7 +246,7 @@ class Background {
         }
       };
 
-      setInterval(loop,15);
+      setInterval(loop,17);
     };
 
     this.image.src = './images/background.gif';
@@ -279,7 +301,6 @@ class Player {
 
 
   draw(ctx) {
-    // debugger
     ctx.clearRect(this.centerX-14,this.centerY-10,this.frameWidth+22,this.frameHeight+22);
     ctx.drawImage(this.spriteSheet,0,0,
     this.frameWidth, this.frameHeight, this.centerX, this.centerY,
@@ -317,8 +338,8 @@ class Token {
     this.points = points;
     this.ctx = ctx;
     this.tokenSheet = new Image();
-
     this.tokenSheet.onload = () => {
+
       this.tokenSheet.src = './images/foods.png';
     };
 
@@ -326,32 +347,20 @@ class Token {
     this.width = 500/8;
     this.height = 61;
     this.startX = 1;
-    this.xCoord = Math.floor(Math.random() * 650) + 100;
+    this.xCoord = 660;
     this.yCoord = Math.floor(Math.random() * 620) + 15;
     this.tokenCoords = [];
   }
 
   draw(ctx) {
-    debugger
-  //   this.tokenSheet.onload = () => {
-  //     ctx.drawImage(this.tokenSheet, this.points * this.width, 0,
-  //     this.width, this.height, this.xCoord, this.yCoord,
-  //     this.width/1.5, this.height/1.5);
-  //   };
-  // }
-  if(this.tokenSheet.src) {
-    }
-
-    const animateCallback = () => {
-    // debugger
+    if(this.tokenSheet.src) {
       ctx.clearRect(this.xCoord, this.yCoord, this.width, this.height);
       ctx.drawImage(this.tokenSheet, this.points * this.width, 0,
-        this.width, this.height, this.xCoord, this.yCoord,
-        this.width/1.5, this.height/1.5);
-    };
+      this.width, this.height, this.xCoord, this.yCoord,
+      this.width/1.5, this.height/1.5);
+    }
 
 
-    window.requestAnimationFrame(animateCallback);
 
   }
 }

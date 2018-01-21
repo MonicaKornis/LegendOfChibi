@@ -94,7 +94,6 @@ class Game {
   constructor(gameCtx,backgroundCtx,gameCanvas,backgroundCanvas) {
     this.player = new Player(12,12,2 * Math.PI,'red');
     this.tokens = [];
-    this.tokenCoords = [];
     this.backgroundCtx = backgroundCtx;
     this.gameCtx = gameCtx;
     this.start = this.start.bind(this);
@@ -111,7 +110,7 @@ class Game {
     this.aliens = [];
     this.renderTokens();
   }
-
+//
   renderBackground(ctx) {
     new Background(0,0).draw(this.backgroundCtx);
   }
@@ -123,15 +122,16 @@ class Game {
   }
 
   playerRecievePoints() {
-    // debugger
+
     for (var i = 0; i < this.tokens.length; i++) {
-        if(this.tokens[i].xCoord <= this.player.centerX && this.player.centerX > this.tokens[i].xCoord ) {
+        if((this.tokens[i].xCoord >= this.player.centerX && this.tokens[i].xCoord  <= this.player.centerX + 40) &&
+           (this.tokens[i].yCoord >= this.player.centerY && this.tokens[i].yCoord  <= this.player.centerY + 40)) {
           console.log('WEEE');
           this.player.points += this.tokens[i].points;
           this.tokens = this.tokens.filter((currentToken) => currentToken.yCoord != this.tokens[i].yCoord);
         }
     }
-    console.log(this.player.points);
+
   }
 
   renderTokens() {
@@ -139,19 +139,15 @@ class Game {
     let width = 680;
     let min = 0 - width;
     let count = 1;
-      // debugger
     let gameCtx = this.gameCtx;
+
     const loop = () => {
-      this.tokens.forEach( function(token) {
-
-
+        this.tokens.forEach( function(token) {
         token.xCoord = x + width;
         token.draw(gameCtx);
 
         x -= count;
-        if (x < min ) {
-          x = 0;
-        }
+
       });
     };
 
@@ -186,7 +182,6 @@ class Game {
 
 
   start(gameCtx,backgroundCtx) {
-    // debugger
     this.renderBackground(backgroundCtx);
     this.draw(gameCtx);
     window.requestAnimationFrame(this.start);
@@ -268,9 +263,6 @@ class Player {
     this.points = 20;
     this.centerX = 100;
     this.centerY = 550;
-    this.radius = 30;
-    this.jumping = false;
-    this.jumpCount = 0;
     this.frameWidth = 959/12;
     this.frameHeight = 73;
   }
@@ -305,25 +297,9 @@ class Player {
     ctx.drawImage(this.spriteSheet,0,0,
     this.frameWidth, this.frameHeight, this.centerX, this.centerY,
     this.frameWidth, this.frameHeight);
-
-
-    // const animateCallback = () => {
-    //   // debugger
-    //     if (this.xDim < 200 && this.yDim < 200 ) {
-    //     this.xDim += 1;
-    //     this.yDim += 1;
-    //     this.draw(ctx);
-    //
-    //   } else if (this.xDim >= 600 && this.yDim >= 600) {
-    //     this.xDim = 1;
-    //     this.yDim = 1;
-    //     this.draw(ctx);
-    //   }
-    // };
-    //
-    //
-    // window.requestAnimationFrame(animateCallback);
   }
+
+
 }
 
 module.exports = Player;
@@ -347,8 +323,8 @@ class Token {
     this.width = 500/8;
     this.height = 61;
     this.startX = 1;
-    this.xCoord = 660;
-    this.yCoord = Math.floor(Math.random() * 620) + 15;
+    this.xCoord = Math.floor(Math.random() * 620) + 100;
+    this.yCoord = Math.floor(Math.random() * 620) + 100;
     this.tokenCoords = [];
   }
 
@@ -359,7 +335,6 @@ class Token {
       this.width, this.height, this.xCoord, this.yCoord,
       this.width/1.5, this.height/1.5);
     }
-
 
 
   }

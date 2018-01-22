@@ -121,6 +121,7 @@ class Game {
         this.tokens.push( new Token(this.gameCtx, points, 'token'));
       }
     }
+    this.difficulty += 2;
   }
 
   // createEvilTokens() {
@@ -350,13 +351,13 @@ class Token {
     this.tokenSheet = new Image();
     this.tokenSheet.onload = () => {
 
-      this.tokenSheet.src = './images/potions.png';
+      this.tokenSheet.src = './images/potions2.png';
     };
 
     this.type = type;
-    this.tokenSheet.src = './images/potions.png';
-    this.width = type == 'token' ? 255/5 : 51;
-    this.height = type == 'token' ? 63 : 51;
+    this.tokenSheet.src = './images/potions2.png';
+    this.width = 272/6;
+    this.height = 63;
     this.startX = 1;
     this.xCoord = Math.floor(Math.random() * 620) + 100;
     this.yCoord = Math.floor(Math.random() * 620) + 100;

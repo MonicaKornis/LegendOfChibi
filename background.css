@@ -1,13 +1,10 @@
-/* #canvas-elements {
-    position: absolute;
-    left:0px;
-    top:0px;
-    background-color: red;
-} */
+#main body {
+    background-color: gold;
+    margin: auto;
+}
 
 #game-canvas {
   position: absolute;
   left: 10000px;
   top: 0px;
-
 }

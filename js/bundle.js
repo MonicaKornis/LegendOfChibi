@@ -70,7 +70,7 @@
 const Game = __webpack_require__(1);
 
 document.addEventListener('DOMContentLoaded', () => {
-  // debugger
+  // 
   let gameCanvas = document.getElementById('game-canvas');
   let ctx;
 

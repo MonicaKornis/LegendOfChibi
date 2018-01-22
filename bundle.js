@@ -77,10 +77,10 @@ class Game {
     this.player = new Player(12,12,2 * Math.PI,'red');
     this.heart = new Image();
     this.heart.src = './images/heart.png';
-    this.alien = new Alien();
+    this.alien = new Alien(this.gameCtx);
     this.tokens = [];
     this.gameCtx = gameCtx;
-    this.background = new Background(0, 0);
+    this.background = new Background(0,0);
     this.backgroundCtx = backgroundCtx;
     this.start = this.start.bind(this);
     this.gameCanvas = gameCanvas;
@@ -89,7 +89,6 @@ class Game {
     this.draw = this.draw.bind(this);
     this.printHeart = this.printHeart.bind(this);
     this.renderTokens = this.renderTokens.bind(this);
-    // this.createEvilTokens =  this.createEvilTokens.bind(this);
     this.createTokens = this.createTokens.bind(this);
     this.playerRecievePoints = this.playerRecievePoints.bind(this);
     this.createTokens(8);
@@ -113,7 +112,6 @@ class Game {
       if(points === 0) {
 
       for(let i = 0; i < this.difficulty ; i++) {
-        debugger
         this.tokens.push( new Token(this.gameCtx, -5, 'death-token'));
         }
 
@@ -124,12 +122,6 @@ class Game {
     this.difficulty += 2;
   }
 
-  // createEvilTokens() {
-  //   for (let i = 0; i <= this.difficulty; i++) {
-  //     // debugger
-  //     this.tokens.push( new Token(this.gameCtx, i ,'death token'));
-  //   }
-  // }
 
   playerRecievePoints() {
     let recieved = false;
@@ -187,11 +179,10 @@ printHeart() {
 
 
   start(ctx) {
-    // debugger
+    //
     requestAnimationFrame(this.start);
     let now = Date.now();
     this.delta = now - this.then;
-    // debugger
     if (this.delta > this.interval) {
       // this.alien.xCoord -=1;
       this.gameCtx.clearRect(0,0,680,650);
@@ -205,10 +196,11 @@ printHeart() {
   }
 
   draw() {
-    // debugger
-    this.player.draw(this.gameCtx);this.playerRecievePoints();
+    this.player.draw(this.gameCtx);
+    this.playerRecievePoints();
     this.filterTokens();
     this.gameCtx.font = `48px sans-serif`;
+
     let gradient = this.gameCtx.createLinearGradient(0,0,this.gameCanvas.width,0);
     gradient.addColorStop("0","magenta");
     gradient.addColorStop("0.5","yellow");
@@ -289,7 +281,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let gameCtx = gameCanvas.getContext('2d');
 
   const game = new Game(gameCtx, backgroundCtx, gameCanvas, backgroundCanvas);
-  // debugger
+  // 
   game.start();
 });
 
@@ -305,19 +297,14 @@ class Background {
     this.x = 0;
   }
 
-
   draw(ctx) {
     this.image = new Image();
-
     this.image.onload = function() {
-      // let x = 0;
       let width = this.image.naturalWidth;
       let min = 0 - width;
       let count = 7;
 
       const loop = () => {
-        // debugger
-
         ctx.drawImage(this.image, this.x, 0);
         ctx.drawImage(this.image, this.x + width * 1.001 ,0);
         ctx.drawImage(this.image, this.x + width * 1.002, 0);
@@ -361,13 +348,10 @@ class Token {
     this.startX = 1;
     this.xCoord = Math.floor(Math.random() * 620) + 100;
     this.yCoord = Math.floor(Math.random() * 620) + 100;
-    this.tokenCoords = [];
   }
 
   draw(ctx) {
     if(this.tokenSheet.src) {
-      // ctx.fillStyle = 'green';
-      // ctx.fillRect(this.xCoord, this.yCoord, this.width, this.height);
       ctx.drawImage(this.tokenSheet, this.index * this.width, 0,
       this.width, this.height, this.xCoord, this.yCoord,
       this.width/1.5, this.height/1.5);
@@ -381,33 +365,105 @@ module.exports = Token;
 
 /***/ }),
 /* 5 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
+
+let Bullet = __webpack_require__(6);
 
 class Alien {
-  constructor() {
+  constructor(ctx,playerX,playerY) {
     this.alienSheet = new Image();
+    this.bullets = [];
     this.alienSheet.src = './images/alien.png';
     this.width = 190/3;
     this.height = 64;
     this.frame = 0;
     this.draw = this.draw.bind(this);
-    this.xcoord = Math.floor(Math.random() * 620) + 100;
-    this.yCoord = Math.floor(Math.random() * 620) + 100;
+    this.drawBullets = this.drawBullets.bind(this);
+    this.removeBullets = this.removeBullets.bind(this);
+    this.xCoord = 400;
+    this.yCoord = 500;
+
+    // this.xCoord = Math.floor(Math.random() * 620) + 100;
+    // this.yCoord = Math.floor(Math.random() * 620) + 100;
+    this.createBullet(ctx);
+  }
+
+  createBullet(ctx) {
+    // debugger
+    this.bullets.push( new Bullet(ctx,-5,'bullet',this.xCoord,this.yCoord+40));
+  }
+
+  drawBullets(ctx) {
+    this.bullets.forEach((bullet) => {
+      // debugger
+      bullet.draw(ctx);
+    });
+    // this.bullets = [];
+  }
+
+  removeBullets(ctx) {
+    debugger
+    this.bullets.forEach((bullet) => {
+      if(bullet.xCoord < 4) {
+        debugger
+        this.bullets = this.bullets.filter((bullet) => bullet.xCoord > 4);
+        this.createBullet(ctx);
+      } else if(bullet.yCoord > 660) {
+        this.bullets = this.bullets.filter((bullet) => bullet.yCoord < 660);
+        this.createBullet(ctx);
+      }
+    });
   }
 
   draw(ctx) {
-      ctx.clearRect(400,500, this.frameWidth, this.frameHeight);
+    ctx.clearRect(400,500, this.frameWidth, this.frameHeight);
       ctx.drawImage(this.alienSheet,this.width*this.frame,0,
-      this.width, this.height, 400,500,this.width, this.height);
+      this.width, this.height, this.xCoord,this.yCoord,this.width, this.height);
       if(this.frame < 3) {
         this.frame += 1;
       } else {
         this.frame = 0;
       }
+      // debugger
+      this.drawBullets(ctx);
+      this.removeBullets(ctx);
     }
+
+
 }
 
 module.exports = Alien;
+
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports, __webpack_require__) {
+
+let Token = __webpack_require__(4);
+
+class Bullet extends Token {
+  constructor(ctx,points,type,xCoord,yCoord) {
+    super(ctx,points,type);
+    this.xCoord = xCoord;
+    this.yCoord = yCoord;
+    debugger
+  }
+
+  draw(ctx) {
+    debugger
+    ctx.fillColor = 'yellow';
+    ctx.beginPath();
+    ctx.arc(this.xCoord,this.yCoord,2,0,1.5*Math.PI);
+    ctx.closePath();
+    ctx.fill();
+    this.xCoord -= 20;
+    this.yCoord +=2.5;
+    ctx.clearRect(this.xCoord,this.yCoord, 15, 15);
+    // this.yCoord += 1;
+  }
+}
+
+module.exports = Bullet;
 
 
 /***/ })

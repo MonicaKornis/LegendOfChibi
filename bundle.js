@@ -77,7 +77,7 @@ class Game {
     this.player = new Player(12,12,2 * Math.PI,'red');
     this.heart = new Image();
     this.heart.src = './images/heart.png';
-    this.alien = new Alien(this.gameCtx);
+    this.alien = new Alien(this.gameCtx,this.player.centerX, this.player.centerY);
     this.tokens = [];
     this.gameCtx = gameCtx;
     this.background = new Background(0,0);
@@ -177,16 +177,15 @@ printHeart() {
     window.addEventListener('keydown', this.move);
   }
 
-
   start(ctx) {
     //
     requestAnimationFrame(this.start);
     let now = Date.now();
     this.delta = now - this.then;
+    this.alien.draw(this.gameCtx,this.player.centerX,this.player.centerY);
     if (this.delta > this.interval) {
       // this.alien.xCoord -=1;
       this.gameCtx.clearRect(0,0,680,650);
-      this.alien.draw(this.gameCtx,this.player.centerX);
         this.renderBackground(this.backgroundCtx);
         this.draw(this.gameCtx);
         this.renderTokens(this.gameCtx);
@@ -233,26 +232,26 @@ class Player {
   }
 
   moveDown(ctx) {
-    if (this.centerY < 650) {
-    this.centerY += 20;
+    if (this.centerY < 620) {
+    this.centerY += 35;
     }
   }
 
   moveUp(ctx) {
-    if (this.centerY > 0) {
-    this.centerY -= 20;
+    if (this.centerY > 2) {
+    this.centerY -= 35;
     }
   }
 
   moveBack(ctx) {
     if (this.centerX > 0 ) {
-    this.centerX -= 20;
+    this.centerX -= 35;
     }
   }
 
   moveFront(ctx) {
-    if (this.centerX < 680) {
-    this.centerX += 20;
+    if (this.centerX < 650) {
+    this.centerX += 35;
     }
   }
 
@@ -377,25 +376,22 @@ class Alien {
     this.width = 190/3;
     this.height = 64;
     this.frame = 0;
+    this.createBullet = this.createBullet.bind(this);
     this.draw = this.draw.bind(this);
     this.drawBullets = this.drawBullets.bind(this);
     this.removeBullets = this.removeBullets.bind(this);
-    this.xCoord = 550;
+    this.xCoord = 570;
     this.yCoord = 100;
-
-    // this.xCoord = Math.floor(Math.random() * 620) + 100;
-    // this.yCoord = Math.floor(Math.random() * 620) + 100;
-    this.createBullet(ctx);
+    this.createBullet(ctx,playerX,playerY);
   }
 
-  createBullet(ctx) {
-    // debugger
-    this.bullets.push( new Bullet(ctx,-5,'bullet',this.xCoord,this.yCoord));
+  createBullet(ctx,playerX,playerY) {
+    this.bullets.push( new Bullet(ctx,-5,'bullet',this.xCoord,this.yCoord,playerX,playerY));
   }
 
-  drawBullets(ctx,playerX) {
+  drawBullets(ctx,playerX,playerY) {
     this.bullets.forEach((bullet) => {
-      bullet.draw(ctx,playerX);
+      bullet.draw(ctx,playerX,playerY);
     });
   }
 
@@ -403,12 +399,12 @@ class Alien {
     // debugger
     this.bullets.forEach((bullet) => {
       if(bullet.xCoord < 4) {
-        // debugger
         this.bullets = this.bullets.filter((bullet) => bullet.xCoord > 4);
         this.createBullet(ctx);
       } else if(bullet.yCoord > 660) {
         this.bullets = this.bullets.filter((bullet) => bullet.yCoord < 660);
         this.createBullet(ctx);
+
       }
     });
   }
@@ -424,6 +420,7 @@ class Alien {
       }
       this.drawBullets(ctx,playerX,playerY);
       this.removeBullets(ctx);
+      console.log(`${this.xCoord,this.yCoord}`);
     }
 
 
@@ -439,25 +436,40 @@ module.exports = Alien;
 let Token = __webpack_require__(4);
 
 class Bullet extends Token {
-  constructor(ctx,points,type,xCoord,yCoord) {
+  constructor(ctx,points,type,xCoord,yCoord,playerX,playerY) {
     super(ctx,points,type);
-    this.xCoord = xCoord;
-    this.yCoord = yCoord;
-    // debugger
+    this.xCoord = 570;
+    this.yCoord = 127;
+    this.decrementX = (this.xCoord - playerX)/16;
+    this.decrementY = (this.yCoord - playerY)/16;
   }
 
   draw(ctx,playerX,playerY) {
-    // debugger
     ctx.fillColor = 'yellow';
     ctx.beginPath();
     ctx.arc(this.xCoord,this.yCoord,3,0,1.5*Math.PI);
     ctx.closePath();
     ctx.fill();
-    let x = playerX < 550 ? playerX-550/6.5 : playerX ;
-    debugger
-    this.xCoord -= x;
-    this.yCoord += 35;
-    ctx.clearRect(this.xCoord,this.yCoord, 15, 15);
+
+    this.xCoord -= this.decrementX;
+    this.yCoord -= this.decrementY;
+    this.startOver(playerX,playerY);
+    console.log(`${this.xCoord}-${this.yCoord}`);
+  }
+
+  startOver(playerX,playerY) {
+    // debugger
+    if(this.xCoord < playerX-100) {
+      this.xCoord = 580;
+      this.yCoord = 127;
+      this.decrementX = (this.xCoord - playerX)/16;
+      this.decrementY = (this.yCoord - playerY)/16;
+    } else if (this.yCoord > playerY+80) {
+      this.xCoord = 580;
+      this.yCoord = 127;
+      this.decrementX = (this.xCoord - playerX)/16;
+      this.decrementY = (this.yCoord - playerY)/16;
+    }
   }
 }
 

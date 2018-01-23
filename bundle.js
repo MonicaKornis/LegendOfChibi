@@ -420,7 +420,7 @@ class Alien {
       }
       this.drawBullets(ctx,playerX,playerY);
       this.removeBullets(ctx);
-      console.log(`${this.xCoord,this.yCoord}`);
+      // console.log(`${this.xCoord,this.yCoord}`);
     }
 
 
@@ -467,8 +467,6 @@ class Bullet extends Token {
     } else if (this.yCoord > playerY+80) {
       this.xCoord = 580;
       this.yCoord = 127;
-      this.decrementX = (this.xCoord - playerX)/16;
-      this.decrementY = (this.yCoord - playerY)/16;
     }
   }
 }

@@ -186,7 +186,7 @@ printHeart() {
     if (this.delta > this.interval) {
       // this.alien.xCoord -=1;
       this.gameCtx.clearRect(0,0,680,650);
-      this.alien.draw(this.gameCtx);
+      this.alien.draw(this.gameCtx,this.player.centerX);
         this.renderBackground(this.backgroundCtx);
         this.draw(this.gameCtx);
         this.renderTokens(this.gameCtx);
@@ -380,8 +380,8 @@ class Alien {
     this.draw = this.draw.bind(this);
     this.drawBullets = this.drawBullets.bind(this);
     this.removeBullets = this.removeBullets.bind(this);
-    this.xCoord = 400;
-    this.yCoord = 500;
+    this.xCoord = 550;
+    this.yCoord = 100;
 
     // this.xCoord = Math.floor(Math.random() * 620) + 100;
     // this.yCoord = Math.floor(Math.random() * 620) + 100;
@@ -390,22 +390,20 @@ class Alien {
 
   createBullet(ctx) {
     // debugger
-    this.bullets.push( new Bullet(ctx,-5,'bullet',this.xCoord,this.yCoord+40));
+    this.bullets.push( new Bullet(ctx,-5,'bullet',this.xCoord,this.yCoord));
   }
 
-  drawBullets(ctx) {
+  drawBullets(ctx,playerX) {
     this.bullets.forEach((bullet) => {
-      // debugger
-      bullet.draw(ctx);
+      bullet.draw(ctx,playerX);
     });
-    // this.bullets = [];
   }
 
   removeBullets(ctx) {
-    debugger
+    // debugger
     this.bullets.forEach((bullet) => {
       if(bullet.xCoord < 4) {
-        debugger
+        // debugger
         this.bullets = this.bullets.filter((bullet) => bullet.xCoord > 4);
         this.createBullet(ctx);
       } else if(bullet.yCoord > 660) {
@@ -415,7 +413,7 @@ class Alien {
     });
   }
 
-  draw(ctx) {
+  draw(ctx,playerX,playerY) {
     ctx.clearRect(400,500, this.frameWidth, this.frameHeight);
       ctx.drawImage(this.alienSheet,this.width*this.frame,0,
       this.width, this.height, this.xCoord,this.yCoord,this.width, this.height);
@@ -424,8 +422,7 @@ class Alien {
       } else {
         this.frame = 0;
       }
-      // debugger
-      this.drawBullets(ctx);
+      this.drawBullets(ctx,playerX,playerY);
       this.removeBullets(ctx);
     }
 
@@ -446,20 +443,21 @@ class Bullet extends Token {
     super(ctx,points,type);
     this.xCoord = xCoord;
     this.yCoord = yCoord;
-    debugger
+    // debugger
   }
 
-  draw(ctx) {
-    debugger
+  draw(ctx,playerX,playerY) {
+    // debugger
     ctx.fillColor = 'yellow';
     ctx.beginPath();
-    ctx.arc(this.xCoord,this.yCoord,2,0,1.5*Math.PI);
+    ctx.arc(this.xCoord,this.yCoord,3,0,1.5*Math.PI);
     ctx.closePath();
     ctx.fill();
-    this.xCoord -= 20;
-    this.yCoord +=2.5;
+    let x = playerX < 550 ? playerX-550/6.5 : playerX ;
+    debugger
+    this.xCoord -= x;
+    this.yCoord += 35;
     ctx.clearRect(this.xCoord,this.yCoord, 15, 15);
-    // this.yCoord += 1;
   }
 }
 

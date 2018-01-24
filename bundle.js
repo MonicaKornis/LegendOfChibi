@@ -91,7 +91,7 @@ class Game {
     this.renderTokens = this.renderTokens.bind(this);
     this.createTokens = this.createTokens.bind(this);
     this.playerRecievePoints = this.playerRecievePoints.bind(this);
-    this.createTokens(8);
+    this.createTokens(12);
     this.setEventListeners();
     this.difficulty = 2;
     this.aliens = [];
@@ -119,7 +119,7 @@ class Game {
         this.tokens.push( new Token(this.gameCtx, points, 'token'));
       }
     }
-    this.difficulty += 2;
+    this.difficulty += 3;
   }
 
 
@@ -132,6 +132,7 @@ class Game {
           this.player.points += this.tokens[i].points;
           this.tokens = this.tokens.filter((currentToken) => currentToken.yCoord != this.tokens[i].yCoord);
           this.printHeart();
+          console.log(this.tokens.length);
         }
     }
   }
@@ -144,14 +145,14 @@ printHeart() {
 
   renderTokens(gameCtx) {
       this.tokens.forEach( function(token) {
-        token.xCoord -= 2;
+        token.xCoord -= 4;
         token.draw(gameCtx);
       });
   }
 
   createMoreTokens() {
-    if(this.tokens.length < 3 ) {
-      this.createTokens(4);
+    if(this.tokens.length < 4 ) {
+      this.createTokens(5);
     }
   }
 
@@ -454,7 +455,7 @@ class Bullet extends Token {
     this.xCoord -= this.decrementX;
     this.yCoord -= this.decrementY;
     this.startOver(playerX,playerY);
-    console.log(`${this.xCoord}-${this.yCoord}`);
+    // console.log(`${this.xCoord}-${this.yCoord}`);
   }
 
   startOver(playerX,playerY) {

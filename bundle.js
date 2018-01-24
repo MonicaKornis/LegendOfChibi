@@ -310,16 +310,16 @@ class Start {
     this.gameCtx.fillText('The Legend of Chibi', 105, 80);
     this.gameCtx.font = '25px Inconsolata';
     this.gameCtx.fillStyle = '#cce6ff';
-    this.gameCtx.fillText('You are a cat named Chibi Mochi trying to collect magic', 30, 250);
-    this.gameCtx.fillText('potions in the Egyptian desert. However, you must watch', 33, 290);
-    this.gameCtx.fillText('out for the malicious aliens who will try to steal your life',36, 330);
-    this.gameCtx.fillText('points!! The game ends when you are out of life points.',37, 370);
+    this.gameCtx.fillText('You are a cat named Chibi Mochi trying to collect magic', 30, 200);
+    this.gameCtx.fillText('potions in the Egyptian desert. However, you must watch', 33, 240);
+    this.gameCtx.fillText('out for the malicious aliens who will try to steal your life',36, 280);
+    this.gameCtx.fillText('points!! The game ends when you are out of life points.',37, 320);
     this.gameCtx.drawImage(this.img, 270,270,this.img.naturalWidth, this.img.naturalHeight);
     this.gameCtx.font = '20px Inconsolata';
     this.gameCtx.fillStyle = '#cce6ff';
     this.gameCtx.font = '28px Inconsolata';
-    this.gameCtx.fillText('Use the up and down arrows to collect tokens.', 51, 455);
-    this.gameCtx.fillText('Just make sure to watch out for the death orbs!', 52, 503);
+    this.gameCtx.fillText('Use the up and down arrows to collect tokens.', 51, 405);
+    this.gameCtx.fillText('Just make sure to watch out for the death orbs!', 52, 453);
 
     this.gameCtx.font = '35px Inconsolata';
     this.gameCtx.fillText('Press Space To Begin', 163, 590);

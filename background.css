@@ -5,9 +5,10 @@
 
 body {
   background-color: black;
-  background-repeat: no-repeat;
+  /* background-repeat: no-repeat; */
   overflow: hidden;
   font-family: 'Enriqueta', cursive;
+  background-image: url("images/b2.gif");
 }
 
 .background {

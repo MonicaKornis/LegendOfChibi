@@ -79,14 +79,14 @@ img {
     border: none;
 }
 
-.token-legend {
+/* .token-legend {
   margin-left: 10%;
   margin-top: -42%;
   border: .5px solid white;
   width: 10%;
   border-right: none;
 
-}
+} */
 
 .labels {
   margin-left: 12%;
@@ -98,4 +98,13 @@ img {
   color: white;
   font-family: 'Inconsolata';
   font-size: 15px;
+}
+
+.contact-links {
+  margin: 40px auto;
+  width: 700px;
+  display: flex;
+  justify-content: space-between;
+  padding-left: 57px;
+  border: .5px solid white;
 }

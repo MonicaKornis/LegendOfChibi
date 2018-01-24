@@ -233,19 +233,20 @@ class Player {
   }
 
   moveDown(ctx) {
-    if (this.centerY < 620) {
+    if (this.centerY < 580) {
     this.centerY += 35;
+    console.log(this.centerY);
     }
   }
 
   moveUp(ctx) {
-    if (this.centerY > 2) {
+    if (this.centerY > 10) {
     this.centerY -= 35;
     }
   }
 
   moveBack(ctx) {
-    if (this.centerX > 0 ) {
+    if (this.centerX > 5 ) {
     this.centerX -= 35;
     }
   }

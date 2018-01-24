@@ -279,7 +279,9 @@ document.addEventListener('DOMContentLoaded', () => {
   let backgroundCanvas = document.getElementById('background-canvas');
   let backgroundCtx = backgroundCanvas.getContext('2d');
   let gameCtx = gameCanvas.getContext('2d');
-  const start = new Start(document,gameCtx, backgroundCtx, gameCanvas, backgroundCanvas);
+  let img = new Image();
+  img.src = './images/potions2.png';
+  const start = new Start(document,gameCtx, backgroundCtx, gameCanvas, backgroundCanvas,img);
   start.message();
   start.play();
 
@@ -289,13 +291,14 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 class Start {
-  constructor(document,gameCtx,backgroundCtx,gameCanvas,backgroundCanvas) {
+  constructor(document,gameCtx,backgroundCtx,gameCanvas,backgroundCanvas,img) {
     this.document = document;
     this.gameCtx = gameCtx;
     this.backgroundCtx = backgroundCtx;
-    this.gameCanvas = this.gameCanvas;
+    this.gameCanvas = gameCanvas;
     this.backgroundCanvas = backgroundCanvas;
     this.playing = false;
+    this.img = img;
   }
 
   message() {
@@ -304,16 +307,22 @@ class Start {
     this.gameCtx.fillRect(0, 0, 630, 680);
     this.gameCtx.fillStyle = '#cce6ff';
     this.gameCtx.font = '50px Inconsolata';
-    this.gameCtx.fillText('The Legend of Chibi', 130, 80);
+    this.gameCtx.fillText('The Legend of Chibi', 105, 80);
     this.gameCtx.font = '25px Inconsolata';
     this.gameCtx.fillStyle = '#cce6ff';
-    this.gameCtx.fillText('Press Space To Begin', 270, 170);
-    this.gameCtx.fillText('watch out for the evil aliens!', 170, 210);
-    this.gameCtx.font = '18px Inconsolata';
+    this.gameCtx.fillText('You are a cat named Chibi Mochi trying to collect magic', 30, 250);
+    this.gameCtx.fillText('potions in the Egyptian desert. However, you must watch', 33, 290);
+    this.gameCtx.fillText('out for the malicious aliens who will try to steal your life',36, 330);
+    this.gameCtx.fillText('points!! The game ends when you are out of life points.',37, 370);
+    this.gameCtx.drawImage(this.img, 270,270,this.img.naturalWidth, this.img.naturalHeight);
+    this.gameCtx.font = '20px Inconsolata';
     this.gameCtx.fillStyle = '#cce6ff';
-    this.gameCtx.fillText('Use the up and down arrows to collect tokens', 275, 325);
-    this.gameCtx.font = '18px Inconsolata';
-    this.gameCtx.fillText('Just watch out for the death orbs!', 300, 350);
+    this.gameCtx.font = '28px Inconsolata';
+    this.gameCtx.fillText('Use the up and down arrows to collect tokens.', 51, 455);
+    this.gameCtx.fillText('Just make sure to watch out for the death orbs!', 52, 503);
+
+    this.gameCtx.font = '35px Inconsolata';
+    this.gameCtx.fillText('Press Space To Begin', 163, 590);
   }
 
 

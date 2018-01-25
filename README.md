@@ -12,8 +12,8 @@
   * Javascript
   * HTML Canvas
 
-## Wireframe
-![wireframe](https://i.imgur.com/lHW2qqA.png)
+<!-- ## Wireframe
+![wireframe](https://i.imgur.com/lHW2qqA.png) -->
 
 ## Architecture
  * player.js - handles logic for player movement/velocity, calculates player's current points.

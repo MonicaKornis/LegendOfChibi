@@ -1,4 +1,5 @@
 ## The Legend of Chibi
+![opening](gifs-read-me/opening.gif "The Legend of Chibi")
 
 [The Legend of Chibi](https://monicakornis.github.io/LegendOfChibi/) is a classic endless runner game, inspired by the likes of Sonic Dash, Temple Run, and Subway Surfers. The main goal of the game is to collect magic potions - pink potions are worth five points, blue potions are worth three, and yellow potions are worth one. However, you must watch out for the malicious aliens who will shoot their laser beams at you! You'll initially start out with 20 points. Each time you get hit by a beam, your points will decrease by 5. The game ends when you're out of points!
 
@@ -16,7 +17,7 @@
  * token.js - handles logic for creating and placing potions in the game.
  * beam.js - handles logic for creating ufo lazer beams and their projectile motion.  
  * game.js - handles logic for game start and end
- * index.js - instantiates Game class 
+ * index.js - instantiates Game class
 
 ## Implementation Timeline
  * Day 1: Review HTML5/Canvas documentation, create display and player classes. Implement controls for player interaction.

@@ -89,7 +89,9 @@ class Game {
     this.draw = this.draw.bind(this);
     this.printHeart = this.printHeart.bind(this);
     this.renderTokens = this.renderTokens.bind(this);
+    this.restart = this.restart.bind(this);
     this.createTokens = this.createTokens.bind(this);
+    this.playerLoosePoints = this.playerLoosePoints.bind(this);
     this.playerRecievePoints = this.playerRecievePoints.bind(this);
     this.createTokens(12);
     this.setEventListeners();
@@ -100,7 +102,6 @@ class Game {
     this.then = Date.now();
     this.interval = 3500/this.fps;
     this.delta;
-
   }
 //
   renderBackground() {
@@ -137,11 +138,23 @@ class Game {
     }
   }
 
-printHeart() {
-  this.gameCtx.drawImage(this.heart,0,0,
-  this.heart.naturalWidth, this.heart.naturalHeight, this.player.centerX + 20 , this.player.centerY -30,
-  this.heart.naturalWidth, this.heart.naturalHeight);
-}
+  playerLoosePoints() {
+    debugger
+    for (var i = 0; i < this.alien.bullets.length; i++) {
+      // if (!this.alien.bullets[i].xCoord) return;
+      if(this.alien.bullets[i].xCoord >= this.player.centerX && this.alien.bullets[i].xCoord <= this.player.centerX + 40 ||
+        this.alien.bullets[i].yCoord >= this.player.centerY && this.alien.bullets[i].yCoord  <= this.player.centerY + 40){
+          this.player.points -= 5;
+          console.log('WAHH');
+      }
+    }
+  }
+
+  printHeart() {
+    this.gameCtx.drawImage(this.heart,0,0,
+    this.heart.naturalWidth, this.heart.naturalHeight, this.player.centerX + 20 , this.player.centerY -30,
+    this.heart.naturalWidth, this.heart.naturalHeight);
+  }
 
   renderTokens(gameCtx) {
       this.tokens.forEach( function(token) {
@@ -153,6 +166,32 @@ printHeart() {
   createMoreTokens() {
     if(this.tokens.length < 4 ) {
       this.createTokens(5);
+    }
+  }
+
+  gameOver(e) {
+    // debugger
+    if(this.player.points <= 0) {
+      this.gameCtx.font = `55px sans-serif`;
+      let gradient = this.gameCtx.createLinearGradient(0,0,this.gameCanvas.width,0);
+      gradient.addColorStop("0","magenta");
+      gradient.addColorStop("0.5","yellow");
+      gradient.addColorStop("1.0","orange");
+      this.gameCtx.fillStyle = gradient;
+      this.gameCtx.clearRect(0,0,680,650);
+      this.gameCtx.fillText('Game Over', 212, 310);
+      this.gameCtx.font = `35px sans-serif`;
+      this.gameCtx.fillText('Press Arrows To Play Again', 144, 370);
+    }
+  }
+
+  restart(e) {
+    debugger
+    e.preventDefault();
+    if(e.keyCode === 32) {
+    this.player.points = 20;
+    this.tokens = [];
+    this.createTokens(12);
     }
   }
 
@@ -172,20 +211,20 @@ printHeart() {
       this.player.moveFront(this.gameCtx);
     }
     this.playerRecievePoints();
+    this.playerLoosePoints();
   }
 
   setEventListeners() {
     window.addEventListener('keydown', this.move);
+    window.addEventListener('keydown', this.restart);
   }
 
   start(ctx) {
-    //
     requestAnimationFrame(this.start);
     let now = Date.now();
     this.delta = now - this.then;
     this.alien.draw(this.gameCtx,this.player.centerX,this.player.centerY);
     if (this.delta > this.interval) {
-      // this.alien.xCoord -=1;
       this.gameCtx.clearRect(0,0,680,650);
         this.renderBackground(this.backgroundCtx);
         this.draw(this.gameCtx);
@@ -193,6 +232,8 @@ printHeart() {
         this.then = now - (this.delta % this.interval);
       }
     this.createMoreTokens();
+    // debugger
+    this.gameOver();
   }
 
   draw() {
@@ -200,15 +241,14 @@ printHeart() {
     this.playerRecievePoints();
     this.filterTokens();
     this.gameCtx.font = `48px sans-serif`;
-
     let gradient = this.gameCtx.createLinearGradient(0,0,this.gameCanvas.width,0);
     gradient.addColorStop("0","magenta");
     gradient.addColorStop("0.5","yellow");
     gradient.addColorStop("1.0","red");
     this.gameCtx.fillStyle = gradient;
     this.gameCtx.fillText(`Life points: ${this.player.points}`, 10, 50);
-
   }
+
 
 }
 
@@ -235,7 +275,7 @@ class Player {
   moveDown(ctx) {
     if (this.centerY < 580) {
     this.centerY += 35;
-    console.log(this.centerY);
+    // console.log(this.centerY);
     }
   }
 

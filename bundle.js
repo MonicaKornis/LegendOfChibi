@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 2);
+/******/ 	return __webpack_require__(__webpack_require__.s = 3);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -68,8 +68,8 @@
 /***/ (function(module, exports, __webpack_require__) {
 
 let Player = __webpack_require__(1);
-let Background = __webpack_require__(3);
-let Token = __webpack_require__(4);
+let Background = __webpack_require__(4);
+let Token = __webpack_require__(2);
 let Alien = __webpack_require__(5);
 
 class Game {
@@ -77,6 +77,8 @@ class Game {
     this.player = new Player(12,12,2 * Math.PI,'red');
     this.heart = new Image();
     this.heart.src = './images/heart.png';
+    this.explosion = new Image();
+    this.explosion.src = './images/explosion.png';
     this.alien = new Alien(this.gameCtx,this.player.centerX, this.player.centerY);
     this.tokens = [];
     this.gameCtx = gameCtx;
@@ -125,27 +127,32 @@ class Game {
 
 
   playerRecievePoints() {
-    let recieved = false;
+    // let recieved = false;
+    // debugger
     for (var i = 0; i < this.tokens.length; i++) {
-        if((this.tokens[i].xCoord >= this.player.centerX && this.tokens[i].xCoord <= this.player.centerX + 40) &&
-           (this.tokens[i].yCoord >= this.player.centerY && this.tokens[i].yCoord <= this.player.centerY + 40)) {
+        if((this.tokens[i].xCoord >= this.player.centerX && this.tokens[i].xCoord <= this.player.centerX + 30) &&
+           (this.tokens[i].yCoord >= this.player.centerY && this.tokens[i].yCoord <= this.player.centerY + 30) &&
+            (this.tokens[i].type === 'token'))
+            {
           console.log('WEEE');
           this.player.points += this.tokens[i].points;
           this.tokens = this.tokens.filter((currentToken) => currentToken.yCoord != this.tokens[i].yCoord);
-          this.printHeart();
+          debugger
+          if(this.tokens[i].type === 'token') {
+            this.printHeart();
+          }
           console.log(this.tokens.length);
         }
     }
   }
 
   playerLoosePoints() {
-    debugger
     for (var i = 0; i < this.alien.bullets.length; i++) {
-      // if (!this.alien.bullets[i].xCoord) return;
-      if(this.alien.bullets[i].xCoord >= this.player.centerX && this.alien.bullets[i].xCoord <= this.player.centerX + 40 ||
-        this.alien.bullets[i].yCoord >= this.player.centerY && this.alien.bullets[i].yCoord  <= this.player.centerY + 40){
+      if(this.alien.bullets[i].xCoord >= this.player.centerX && this.alien.bullets[i].xCoord <= this.player.centerX + 30 ||
+        this.alien.bullets[i].yCoord >= this.player.centerY && this.alien.bullets[i].yCoord  <= this.player.centerY + 30){
           this.player.points -= 5;
           console.log('WAHH');
+
       }
     }
   }
@@ -186,12 +193,19 @@ class Game {
   }
 
   restart(e) {
-    debugger
     e.preventDefault();
     if(e.keyCode === 32) {
-    this.player.points = 20;
-    this.tokens = [];
-    this.createTokens(12);
+    // this.player.points = 20;
+    // this.tokens = [];
+    // this.createTokens(12);
+    // this.gameCtx.clearRect(0,0,680,650);
+    // this.player.centerY = 550;
+    // this.player.centerX = 100;
+    // this.difficulty = 2;
+    // console.log(this.difficulty);
+    // console.log(`${this.tokens.length} tokens, ${this.player.centerX}`);
+    // window.addEventListener('keydown', this.restart);
+    window.location.reload();
     }
   }
 
@@ -216,7 +230,6 @@ class Game {
 
   setEventListeners() {
     window.addEventListener('keydown', this.move);
-    window.addEventListener('keydown', this.restart);
   }
 
   start(ctx) {
@@ -275,7 +288,6 @@ class Player {
   moveDown(ctx) {
     if (this.centerY < 560) {
     this.centerY += 35;
-    // console.log(this.centerY);
     }
   }
 
@@ -311,6 +323,43 @@ module.exports = Player;
 
 /***/ }),
 /* 2 */
+/***/ (function(module, exports) {
+
+class Token {
+  constructor(ctx,points,type){
+    this.points = points;
+    this.index = points === -5 ? 0 : points;
+    this.ctx = ctx;
+    this.tokenSheet = new Image();
+    this.tokenSheet.onload = () => {
+
+      this.tokenSheet.src = './images/potions2.png';
+    };
+
+    this.type = type;
+    this.tokenSheet.src = './images/potions2.png';
+    this.width = 272/6;
+    this.height = 63;
+    this.startX = 1;
+    this.xCoord = Math.floor(Math.random() * 620) + 100;
+    this.yCoord = Math.floor(Math.random() * 620) + 100;
+  }
+
+  draw(ctx) {
+    if(this.tokenSheet.src) {
+      ctx.drawImage(this.tokenSheet, this.index * this.width, 0,
+      this.width, this.height, this.xCoord, this.yCoord,
+      this.width/1.5, this.height/1.5);
+    }
+  }
+
+}
+
+module.exports = Token;
+
+
+/***/ }),
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const Game = __webpack_require__(0);
@@ -389,7 +438,7 @@ class Start {
 
 
 /***/ }),
-/* 3 */
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 let Player = __webpack_require__(1);
@@ -426,43 +475,6 @@ class Background {
 
 
 module.exports = Background;
-
-
-/***/ }),
-/* 4 */
-/***/ (function(module, exports) {
-
-class Token {
-  constructor(ctx,points,type){
-    this.points = points;
-    this.index = points === -5 ? 0 : points;
-    this.ctx = ctx;
-    this.tokenSheet = new Image();
-    this.tokenSheet.onload = () => {
-
-      this.tokenSheet.src = './images/potions2.png';
-    };
-
-    this.type = type;
-    this.tokenSheet.src = './images/potions2.png';
-    this.width = 272/6;
-    this.height = 63;
-    this.startX = 1;
-    this.xCoord = Math.floor(Math.random() * 620) + 100;
-    this.yCoord = Math.floor(Math.random() * 620) + 100;
-  }
-
-  draw(ctx) {
-    if(this.tokenSheet.src) {
-      ctx.drawImage(this.tokenSheet, this.index * this.width, 0,
-      this.width, this.height, this.xCoord, this.yCoord,
-      this.width/1.5, this.height/1.5);
-    }
-  }
-
-}
-
-module.exports = Token;
 
 
 /***/ }),
@@ -536,7 +548,7 @@ module.exports = Alien;
 /* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
-let Token = __webpack_require__(4);
+let Token = __webpack_require__(2);
 
 class Bullet extends Token {
   constructor(ctx,points,type,xCoord,yCoord,playerX,playerY) {

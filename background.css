@@ -37,28 +37,28 @@ body {
 
 @media (min-width: 668px) {
   #canvas-elements {
-    transform: scale(0.65);
-    margin-left: 30%;
+    transform: scale(0.75);
+    margin-left: 24%;
     margin-right: 90%;
-    margin-top: -8%;
+    margin-top: -5%;
   }
 }
 
 @media (min-width: 1161px) {
   #canvas-elements {
-    transform: scale(0.75);
-    margin-left: 34%;
-    margin-right: 90%;
-    margin-top: -5%;
+    transform: scale(0.77);
+    margin-left: 30%;
+    margin-right: 88%;
+    margin-top: -2%;
   }
 }
 
 @media (min-width: 1460px) {
   #canvas-elements {
-    transform: scale(0.75);
+    transform: scale(0.79);
     margin-left: 34%;
     margin-right: 90%;
-    margin-top: -5%;
+    margin-top: -3%;
   }
 }
 
@@ -67,7 +67,7 @@ body {
     transform: scale(0.79);
     margin-left: 34%;
     margin-right: 90%;
-    margin-top: -10%;
+    margin-top: -8%;
   }
 }
 

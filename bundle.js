@@ -142,7 +142,7 @@ class Game {
           if(this.tokens[i].type === 'token') {
             this.printHeart();
           }
-          console.log(this.tokens.length);
+          // console.log(this.tokens.length);
         }
     }
   }
@@ -296,7 +296,7 @@ class Player {
   }
 
   moveDown(ctx) {
-    if (this.centerY < 560) {
+    if (this.centerY < 550) {
     this.centerY += 35;
     }
   }
@@ -308,7 +308,7 @@ class Player {
   }
 
   moveBack(ctx) {
-    if (this.centerX > 5 ) {
+    if (this.centerX > 10 ) {
     this.centerX -= 35;
     }
     console.log(this.centerX);

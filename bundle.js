@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 2);
+/******/ 	return __webpack_require__(__webpack_require__.s = 3);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -68,8 +68,8 @@
 /***/ (function(module, exports, __webpack_require__) {
 
 let Player = __webpack_require__(1);
-let Background = __webpack_require__(3);
-let Token = __webpack_require__(4);
+let Background = __webpack_require__(4);
+let Token = __webpack_require__(2);
 let Alien = __webpack_require__(5);
 
 class Game {
@@ -311,6 +311,43 @@ module.exports = Player;
 
 /***/ }),
 /* 2 */
+/***/ (function(module, exports) {
+
+class Token {
+  constructor(ctx,points,type){
+    this.points = points;
+    this.index = points === -5 ? 0 : points;
+    this.ctx = ctx;
+    this.tokenSheet = new Image();
+    this.tokenSheet.onload = () => {
+
+      this.tokenSheet.src = './images/potions2.png';
+    };
+
+    this.type = type;
+    this.tokenSheet.src = './images/potions2.png';
+    this.width = 272/6;
+    this.height = 63;
+    this.startX = 1;
+    this.xCoord = Math.floor(Math.random() * 620) + 100;
+    this.yCoord = Math.floor(Math.random() * 620) + 100;
+  }
+
+  draw(ctx) {
+    if(this.tokenSheet.src) {
+      ctx.drawImage(this.tokenSheet, this.index * this.width, 0,
+      this.width, this.height, this.xCoord, this.yCoord,
+      this.width/1.5, this.height/1.5);
+    }
+  }
+
+}
+
+module.exports = Token;
+
+
+/***/ }),
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const Game = __webpack_require__(0);
@@ -389,7 +426,7 @@ class Start {
 
 
 /***/ }),
-/* 3 */
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 let Player = __webpack_require__(1);
@@ -426,43 +463,6 @@ class Background {
 
 
 module.exports = Background;
-
-
-/***/ }),
-/* 4 */
-/***/ (function(module, exports) {
-
-class Token {
-  constructor(ctx,points,type){
-    this.points = points;
-    this.index = points === -5 ? 0 : points;
-    this.ctx = ctx;
-    this.tokenSheet = new Image();
-    this.tokenSheet.onload = () => {
-
-      this.tokenSheet.src = './images/potions2.png';
-    };
-
-    this.type = type;
-    this.tokenSheet.src = './images/potions2.png';
-    this.width = 272/6;
-    this.height = 63;
-    this.startX = 1;
-    this.xCoord = Math.floor(Math.random() * 620) + 100;
-    this.yCoord = Math.floor(Math.random() * 620) + 100;
-  }
-
-  draw(ctx) {
-    if(this.tokenSheet.src) {
-      ctx.drawImage(this.tokenSheet, this.index * this.width, 0,
-      this.width, this.height, this.xCoord, this.yCoord,
-      this.width/1.5, this.height/1.5);
-    }
-  }
-
-}
-
-module.exports = Token;
 
 
 /***/ }),
@@ -536,7 +536,7 @@ module.exports = Alien;
 /* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
-let Token = __webpack_require__(4);
+let Token = __webpack_require__(2);
 
 class Bullet extends Token {
   constructor(ctx,points,type,xCoord,yCoord,playerX,playerY) {

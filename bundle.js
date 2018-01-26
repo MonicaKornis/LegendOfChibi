@@ -275,7 +275,7 @@ class Player {
   moveDown(ctx) {
     if (this.centerY < 560) {
     this.centerY += 35;
-    // console.log(this.centerY);
+    console.log(this.centerY);
     }
   }
 
@@ -289,6 +289,7 @@ class Player {
     if (this.centerX > 5 ) {
     this.centerX -= 35;
     }
+    console.log(this.centerX);
   }
 
   moveFront(ctx) {

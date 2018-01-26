@@ -137,7 +137,7 @@ class Game {
           console.log('WEEE');
           this.player.points += this.tokens[i].points;
           this.tokens = this.tokens.filter((currentToken) => currentToken.yCoord != this.tokens[i].yCoord);
-          debugger
+
           if(this.tokens[i].type === 'token') {
             this.printHeart();
           }
@@ -148,8 +148,8 @@ class Game {
 
   playerLoosePoints() {
     for (var i = 0; i < this.alien.bullets.length; i++) {
-      if(this.alien.bullets[i].xCoord >= this.player.centerX && this.alien.bullets[i].xCoord <= this.player.centerX + 30 ||
-        this.alien.bullets[i].yCoord >= this.player.centerY && this.alien.bullets[i].yCoord  <= this.player.centerY + 30){
+      if(this.alien.bullets[i].xCoord >= this.player.centerX-20 && this.alien.bullets[i].xCoord <= this.player.centerX + 20 &&
+        this.alien.bullets[i].yCoord >= this.player.centerY-20 && this.alien.bullets[i].yCoord  <= this.player.centerY + 20){
           this.player.points -= 5;
           console.log('WAHH');
 
@@ -195,17 +195,13 @@ class Game {
   restart(e) {
     e.preventDefault();
     if(e.keyCode === 32) {
-    // this.player.points = 20;
-    // this.tokens = [];
-    // this.createTokens(12);
-    // this.gameCtx.clearRect(0,0,680,650);
-    // this.player.centerY = 550;
-    // this.player.centerX = 100;
-    // this.difficulty = 2;
-    // console.log(this.difficulty);
-    // console.log(`${this.tokens.length} tokens, ${this.player.centerX}`);
-    // window.addEventListener('keydown', this.restart);
-    window.location.reload();
+    this.player.points = 20;
+    this.tokens = [];
+    this.createTokens(12);
+    this.gameCtx.clearRect(0,0,680,650);
+    this.player.centerY = 550;
+    this.player.centerX = 100;
+    this.difficulty = 2;
     }
   }
 
@@ -225,11 +221,12 @@ class Game {
       this.player.moveFront(this.gameCtx);
     }
     this.playerRecievePoints();
-    this.playerLoosePoints();
+    // this.playerLoosePoints();
   }
 
   setEventListeners() {
     window.addEventListener('keydown', this.move);
+    window.addEventListener('keydown', this.restart);
   }
 
   start(ctx) {
@@ -245,8 +242,8 @@ class Game {
         this.then = now - (this.delta % this.interval);
       }
     this.createMoreTokens();
-    // debugger
     this.gameOver();
+    this.playerLoosePoints()
   }
 
   draw() {

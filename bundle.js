@@ -128,29 +128,27 @@ class Game {
 
 
   playerRecievePoints() {
-    // let recieved = false;
-    // debugger
     for (var i = 0; i < this.tokens.length; i++) {
-        if((this.tokens[i].xCoord >= this.player.centerX && this.tokens[i].xCoord <= this.player.centerX + 30) &&
-           (this.tokens[i].yCoord >= this.player.centerY && this.tokens[i].yCoord <= this.player.centerY + 30) &&
-            (this.tokens[i].type === 'token'))
+        if((this.tokens[i].xCoord-10 >= this.player.centerX && this.tokens[i].xCoord <= this.player.centerX + 40) &&
+           (this.tokens[i].yCoord-10 >= this.player.centerY && this.tokens[i].yCoord <= this.player.centerY + 40))
             {
+              debugger
           console.log('WEEE');
+          console.log(`${this.tokens[i].points}`);
           this.player.points += this.tokens[i].points;
           this.tokens = this.tokens.filter((currentToken) => currentToken.yCoord != this.tokens[i].yCoord);
 
           if(this.tokens[i].type === 'token') {
             this.printHeart();
           }
-          // console.log(this.tokens.length);
         }
     }
   }
 
   playerLoosePoints() {
     for (var i = 0; i < this.alien.bullets.length; i++) {
-      if(this.alien.bullets[i].xCoord >= this.player.centerX-10 && this.alien.bullets[i].xCoord <= this.player.centerX + 10 &&
-        this.alien.bullets[i].yCoord >= this.player.centerY-10 && this.alien.bullets[i].yCoord  <= this.player.centerY + 10){
+      if(this.alien.bullets[i].xCoord >= this.player.centerX-20 && this.alien.bullets[i].xCoord <= this.player.centerX + 20 &&
+        this.alien.bullets[i].yCoord >= this.player.centerY-20 && this.alien.bullets[i].yCoord  <= this.player.centerY + 20){
           this.player.points -= 5;
           console.log('WAHH');
           this.renderExplosion();
@@ -161,7 +159,6 @@ class Game {
 
   renderExplosion() {
     for (let i = 0; i < 9; i++) {
-      debugger
       let width = 970/8;
       let heigth = 90;
       this.gameCtx.drawImage(this.explosion, i, width*i,
@@ -352,8 +349,8 @@ class Token {
     this.width = 272/6;
     this.height = 63;
     this.startX = 1;
-    this.xCoord = Math.floor(Math.random() * 620) + 100;
-    this.yCoord = Math.floor(Math.random() * 620) + 100;
+    this.xCoord = Math.floor(Math.random() * 550) + 100;
+    this.yCoord = Math.floor(Math.random() * 550) + 100;
   }
 
   draw(ctx) {
@@ -580,11 +577,9 @@ class Bullet extends Token {
     this.xCoord -= this.decrementX;
     this.yCoord -= this.decrementY;
     this.startOver(playerX,playerY);
-    // console.log(`${this.xCoord}-${this.yCoord}`);
   }
 
   startOver(playerX,playerY) {
-    // debugger
     if(this.xCoord < playerX-100) {
       this.xCoord = 580;
       this.yCoord = 127;

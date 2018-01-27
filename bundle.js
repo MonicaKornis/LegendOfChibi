@@ -302,7 +302,7 @@ class Player {
   }
 
   moveBack(ctx) {
-    if (this.centerX > 10 ) {
+    if (this.centerX > 70 ) {
     this.centerX -= 35;
     }
     console.log(this.centerX);
@@ -559,8 +559,8 @@ class Bullet extends Token {
     super(ctx,points,type);
     this.xCoord = 570;
     this.yCoord = 127;
-    this.decrementX = (this.xCoord - playerX)/16;
-    this.decrementY = (this.yCoord - playerY)/16;
+    this.decrementX = (this.xCoord - playerX)/15;
+    this.decrementY = (this.yCoord - playerY)/15;
   }
 
   draw(ctx,playerX,playerY) {
@@ -581,8 +581,8 @@ class Bullet extends Token {
       this.xCoord = 580;
       this.yCoord = 127;
       console.log(`${playerY} playerY`);
-      this.decrementX = (this.xCoord - playerX)/16;
-      this.decrementY = (this.yCoord - playerY)/16;
+      this.decrementX = (this.xCoord - playerX)/15;
+      this.decrementY = (this.yCoord - playerY)/15;
     }
   }
 }

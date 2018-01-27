@@ -132,7 +132,6 @@ class Game {
         if((this.tokens[i].xCoord-10 >= this.player.centerX && this.tokens[i].xCoord <= this.player.centerX + 40) &&
            (this.tokens[i].yCoord-10 >= this.player.centerY && this.tokens[i].yCoord <= this.player.centerY + 40))
             {
-              debugger
           console.log('WEEE');
           console.log(`${this.tokens[i].points}`);
           this.player.points += this.tokens[i].points;
@@ -187,7 +186,6 @@ class Game {
   }
 
   gameOver(e) {
-    // debugger
     if(this.player.points <= 0) {
       this.gameCtx.font = `55px sans-serif`;
       let gradient = this.gameCtx.createLinearGradient(0,0,this.gameCanvas.width,0);
@@ -231,7 +229,6 @@ class Game {
       this.player.moveFront(this.gameCtx);
     }
     this.playerRecievePoints();
-    // this.playerLoosePoints();
   }
 
   setEventListeners() {
@@ -253,7 +250,7 @@ class Game {
       }
     this.createMoreTokens();
     this.gameOver();
-    this.playerLoosePoints()
+    this.playerLoosePoints();
   }
 
   draw() {
@@ -343,7 +340,6 @@ class Token {
 
       this.tokenSheet.src = './images/potions2.png';
     };
-
     this.type = type;
     this.tokenSheet.src = './images/potions2.png';
     this.width = 272/6;
@@ -580,14 +576,13 @@ class Bullet extends Token {
   }
 
   startOver(playerX,playerY) {
-    if(this.xCoord < playerX-100) {
+    // console.log(`${playerY}`);
+    if(this.xCoord < playerX-50 || this.yCoord > playerY +80) {
       this.xCoord = 580;
       this.yCoord = 127;
+      console.log(`${playerY} playerY`);
       this.decrementX = (this.xCoord - playerX)/16;
       this.decrementY = (this.yCoord - playerY)/16;
-    } else if (this.yCoord > playerY+80) {
-      this.xCoord = 580;
-      this.yCoord = 127;
     }
   }
 }

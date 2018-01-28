@@ -193,7 +193,7 @@ class Game {
       gradient.addColorStop("0.5","yellow");
       gradient.addColorStop("1.0","orange");
       this.gameCtx.fillStyle = gradient;
-      this.gameCtx.clearRect(0,0,680,650);
+      this.gameCtx.clearRect(0,0,680,700);
       this.gameCtx.fillText('Game Over', 212, 310);
       this.gameCtx.font = `35px sans-serif`;
       this.gameCtx.fillText('Press Arrows To Play Again', 144, 370);
@@ -206,7 +206,7 @@ class Game {
     this.player.points = 20;
     this.tokens = [];
     this.createTokens(12);
-    this.gameCtx.clearRect(0,0,680,650);
+    this.gameCtx.clearRect(0, 0, 690, 720);
     this.player.centerY = 550;
     this.player.centerX = 100;
     this.difficulty = 2;
@@ -242,7 +242,7 @@ class Game {
     this.delta = now - this.then;
     this.alien.draw(this.gameCtx,this.player.centerX,this.player.centerY);
     if (this.delta > this.interval) {
-      this.gameCtx.clearRect(0,0,680,650);
+        this.gameCtx.clearRect(0, 0, 690, 720);
         this.renderBackground(this.backgroundCtx);
         this.draw(this.gameCtx);
         this.renderTokens(this.gameCtx);
@@ -302,7 +302,7 @@ class Player {
   }
 
   moveBack(ctx) {
-    if (this.centerX > 70 ) {
+    if (this.centerX > 40) {
     this.centerX -= 35;
     }
     console.log(this.centerX);
@@ -392,32 +392,32 @@ class Start {
     this.gameCanvas = gameCanvas;
     this.backgroundCanvas = backgroundCanvas;
     this.playing = false;
-    // this.img = img;
   }
 
   message() {
-    this.gameCtx.clearRect(0, 0, 630, 680);
+    this.gameCtx.clearRect(20, 0, 690, 720);
     this.gameCtx.fillStyle = "#3366ff";
-    this.gameCtx.fillRect(0, 0, 630, 680);
+    this.gameCtx.fillRect(20, 0, 690, 720);
     this.gameCtx.fillStyle = '#cce6ff';
-    this.gameCtx.font = '50px Inconsolata';
-    this.gameCtx.fillText('The Legend of Chibi', 105, 80);
+    this.gameCtx.font = '57px Inconsolata';
+    this.gameCtx.fillText('The Legend of Chibi', 122, 95);
 
     this.gameCtx.font = '25px Inconsolata';
     this.gameCtx.fillStyle = '#cce6ff';
-    this.gameCtx.fillText('You are a cat named Chibi Mochi trying to collect magic', 30, 200);
-    this.gameCtx.fillText('potions in the Egyptian desert. However, you must watch', 33, 240);
-    this.gameCtx.fillText('out for the malicious aliens who will try to steal your life',36, 280);
-    this.gameCtx.fillText('points!! The game ends when you are out of life points.',37, 320);
+    this.gameCtx.fillText('You are a cat named Chibi Mochi trying to collect magic', 80, 200);
+    this.gameCtx.fillText('potions in the Egyptian desert. However, you must watch', 83, 240);
+    this.gameCtx.fillText('out for the malicious aliens who will try to steal your life',86, 280);
+    this.gameCtx.fillText('points!! The game ends when you are out of life points.',87, 320);
     // this.gameCtx.drawImage(this.img, 270,270,this.img.naturalWidth, this.img.naturalHeight);
     this.gameCtx.font = '20px Inconsolata';
     this.gameCtx.fillStyle = '#cce6ff';
     this.gameCtx.font = '28px Inconsolata';
-    this.gameCtx.fillText('Use the up and down arrows to collect tokens.', 51, 405);
-    this.gameCtx.fillText('Just make sure to watch out for the death orbs!', 52, 453);
+    this.gameCtx.fillText('Use the up and down arrows to collect tokens.', 106, 405);
+    this.gameCtx.fillText('Just make sure to watch out for the death orbs!', 107, 453);
 
-    this.gameCtx.font = '35px Inconsolata';
-    this.gameCtx.fillText('Press Space To Begin', 163, 590);
+    this.gameCtx.font = '41px Inconsolata';
+    this.gameCtx.fillText('Press Space To Begin', 190, 590);
+
   }
 
 
@@ -429,6 +429,7 @@ class Start {
       if (e.keyCode === 32 && !this.playing) {
         this.playing = true;
         // return new Game(this.document, this.ctx, this.playing, this.initialized);
+        this.gameCtx.clearRect(0, 0, 720, 740);
         const game = new Game(this.gameCtx, this.backgroundCtx, this.gameCanvas, this.backgroundCanvas);
         game.start();
       }
@@ -577,10 +578,11 @@ class Bullet extends Token {
 
   startOver(playerX,playerY) {
     // console.log(`${playerY}`);
-    if(this.xCoord < playerX-50 || this.yCoord > playerY +80) {
+    if(this.xCoord < playerX-10 || this.yCoord > playerY +80) {
       this.xCoord = 580;
       this.yCoord = 127;
-      console.log(`${playerY} playerY`);
+      // console.log(`${playerY} playerY`);
+      // console.log(this.xCoord);
       this.decrementX = (this.xCoord - playerX)/15;
       this.decrementY = (this.yCoord - playerY)/15;
     }

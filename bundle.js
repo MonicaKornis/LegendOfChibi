@@ -196,7 +196,7 @@ class Game {
       gradient.addColorStop("0.5","yellow");
       gradient.addColorStop("1.0","orange");
       this.gameCtx.fillStyle = gradient;
-      this.gameCtx.clearRect(0,0,700,770);
+      this.gameCtx.clearRect(0,0,720,770);
       this.gameCtx.fillText('Game Over', 230, 310);
       this.gameCtx.font = `35px sans-serif`;
       this.gameCtx.fillText(`Total Tokens Collected: ${this.totalTokens}` ,168, 370);

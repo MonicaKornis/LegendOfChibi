@@ -42,7 +42,7 @@ body {
     justify-content: space-between;
     padding-left: 57px;
     color: white;
-    margin-top: -5%;
+    margin-top: -3%;
     margin-right: 7%;
   }
   a {
@@ -61,7 +61,7 @@ body {
 @media (min-width: 668px) {
   #canvas-elements {
     transform: scale(0.70);
-    margin-left: 24%;
+    margin-left: 26%;
     margin-right: 90%;
     margin-top: -5%;
 
@@ -99,8 +99,8 @@ body {
     justify-content: space-between;
     padding-left: 57px;
     color: white;
-    margin-top: -1%;
-    margin-right: 14%;
+    margin-top: -2%;
+    margin-right: 12%;
   }
   a {
     color: white;
@@ -120,7 +120,7 @@ body {
     transform: scale(0.77);
     margin-left: 28%;
     margin-right: 88%;
-    margin-top: -2%;
+    margin-top: -4%;
   }
   .contact-links {
     margin: 40px auto;
@@ -131,7 +131,7 @@ body {
     padding-left: 57px;
     color: white;
     margin-top: -1%;
-    margin-right: 21%;
+    margin-right: 20.5%;
   }
   a {
     color: white;
@@ -151,7 +151,7 @@ body {
     transform: scale(0.79);
     margin-left: 29%;
     margin-right: 90%;
-    margin-top: -3%;
+    margin-top: 1%;
   }
 
   .contact-links {

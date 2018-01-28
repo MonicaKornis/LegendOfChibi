@@ -97,7 +97,7 @@ class Game {
     this.createTokens = this.createTokens.bind(this);
     this.playerLoosePoints = this.playerLoosePoints.bind(this);
     this.playerRecievePoints = this.playerRecievePoints.bind(this);
-    this.createTokens(12);
+    this.createTokens(6);
     this.setEventListeners();
     this.difficulty = 2;
     this.aliens = [];
@@ -183,7 +183,7 @@ class Game {
   }
 
   createMoreTokens() {
-    if(this.tokens.length < 4 ) {
+    if(this.tokens.length < 6 ) {
       this.createTokens(5);
     }
   }
@@ -543,7 +543,9 @@ class Alien {
       } else {
         this.frame = 0;
       }
-      this.drawBullets(ctx,playerX,playerY);
+      window.setTimeout(this.drawBullets(ctx,playerX,playerY), 1000);
+
+      // this.drawBullets(ctx,playerX,playerY);
       this.removeBullets(ctx);
       // console.log(`${this.xCoord,this.yCoord}`);
     }

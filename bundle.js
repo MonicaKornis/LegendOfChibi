@@ -82,6 +82,7 @@ class Game {
     this.alien = new Alien(this.gameCtx,this.player.centerX, this.player.centerY);
     this.tokens = [];
     this.gameCtx = gameCtx;
+    this.totalTokens = 0;
     this.background = new Background(0,0);
     this.backgroundCtx = backgroundCtx;
     this.start = this.start.bind(this);
@@ -123,14 +124,14 @@ class Game {
         this.tokens.push( new Token(this.gameCtx, points, 'token'));
       }
     }
-    this.difficulty += 3;
+    this.difficulty += 2;
   }
 
 
   playerRecievePoints() {
     for (var i = 0; i < this.tokens.length; i++) {
-        if((this.tokens[i].xCoord-10 >= this.player.centerX && this.tokens[i].xCoord <= this.player.centerX + 40) &&
-           (this.tokens[i].yCoord-10 >= this.player.centerY && this.tokens[i].yCoord <= this.player.centerY + 40))
+        if((this.tokens[i].xCoord >= this.player.centerX && this.tokens[i].xCoord <= this.player.centerX + 50) &&
+           (this.tokens[i].yCoord >= this.player.centerY && this.tokens[i].yCoord <= this.player.centerY + 50))
             {
           console.log('WEEE');
           console.log(`${this.tokens[i].points}`);
@@ -139,6 +140,7 @@ class Game {
 
           if(this.tokens[i].type === 'token') {
             this.printHeart();
+            this.totalTokens += 1;
           }
         }
     }
@@ -150,7 +152,7 @@ class Game {
         this.alien.bullets[i].yCoord >= this.player.centerY-20 && this.alien.bullets[i].yCoord  <= this.player.centerY + 20){
           this.player.points -= 5;
           console.log('WAHH');
-          this.renderExplosion();
+          // this.renderExplosion();
 
       }
     }
@@ -158,11 +160,12 @@ class Game {
 
   renderExplosion() {
     for (let i = 0; i < 9; i++) {
+      // debugger
       let width = 970/8;
       let heigth = 90;
       this.gameCtx.drawImage(this.explosion, i, width*i,
-      this.explosion.naturalWidth/8, this.explosion.naturalHeight, this.explosion.centerX + 20 , this.player.centerY -30,
-      this.explosion.naturalWidth/8, this.explosion.naturalHeight);
+      this.explosion.naturalWidth/8, this.explosion.naturalHeight, this.player.centerX +10 , this.player.centerY-10,
+      this.explosion.naturalWidth/8*2, this.explosion.naturalHeight*2);
     }
   }
 
@@ -193,10 +196,11 @@ class Game {
       gradient.addColorStop("0.5","yellow");
       gradient.addColorStop("1.0","orange");
       this.gameCtx.fillStyle = gradient;
-      this.gameCtx.clearRect(0,0,680,700);
-      this.gameCtx.fillText('Game Over', 212, 310);
+      this.gameCtx.clearRect(0,0,700,770);
+      this.gameCtx.fillText('Game Over', 230, 310);
       this.gameCtx.font = `35px sans-serif`;
-      this.gameCtx.fillText('Press Arrows To Play Again', 144, 370);
+      this.gameCtx.fillText(`Total Tokens Collected: ${this.totalTokens}` ,168, 370);
+      this.gameCtx.fillText('Press Space To Play Again', 160, 430);
     }
   }
 
@@ -205,8 +209,9 @@ class Game {
     if(e.keyCode === 32) {
     this.player.points = 20;
     this.tokens = [];
+    this.totalTokens = 0;
     this.createTokens(12);
-    this.gameCtx.clearRect(0, 0, 690, 720);
+    this.gameCtx.clearRect(0, 0, 690, 770);
     this.player.centerY = 550;
     this.player.centerX = 100;
     this.difficulty = 2;
@@ -242,7 +247,7 @@ class Game {
     this.delta = now - this.then;
     this.alien.draw(this.gameCtx,this.player.centerX,this.player.centerY);
     if (this.delta > this.interval) {
-        this.gameCtx.clearRect(0, 0, 690, 720);
+        this.gameCtx.clearRect(0, 0, 720, 770);
         this.renderBackground(this.backgroundCtx);
         this.draw(this.gameCtx);
         this.renderTokens(this.gameCtx);
@@ -257,13 +262,13 @@ class Game {
     this.player.draw(this.gameCtx);
     this.playerRecievePoints();
     this.filterTokens();
-    this.gameCtx.font = `48px sans-serif`;
+    this.gameCtx.font = `40px sans-serif`;
     let gradient = this.gameCtx.createLinearGradient(0,0,this.gameCanvas.width,0);
     gradient.addColorStop("0","magenta");
     gradient.addColorStop("0.5","yellow");
     gradient.addColorStop("1.0","red");
     this.gameCtx.fillStyle = gradient;
-    this.gameCtx.fillText(`Life points: ${this.player.points}`, 10, 50);
+    this.gameCtx.fillText(`Life points: ${this.player.points}   Tokens Collected: ${this.totalTokens}`, 20, 50);
   }
 
 
@@ -290,13 +295,13 @@ class Player {
   }
 
   moveDown(ctx) {
-    if (this.centerY < 550) {
+    if (this.centerY < 560) {
     this.centerY += 35;
     }
   }
 
   moveUp(ctx) {
-    if (this.centerY > 10) {
+    if (this.centerY > 30) {
     this.centerY -= 35;
     }
   }
@@ -309,7 +314,7 @@ class Player {
   }
 
   moveFront(ctx) {
-    if (this.centerX < 650) {
+    if (this.centerX < 600) {
     this.centerX += 35;
     }
   }
@@ -345,8 +350,8 @@ class Token {
     this.width = 272/6;
     this.height = 63;
     this.startX = 1;
-    this.xCoord = Math.floor(Math.random() * 550) + 100;
-    this.yCoord = Math.floor(Math.random() * 550) + 100;
+    this.xCoord = Math.floor(Math.random() * 530) + 100;
+    this.yCoord = Math.floor(Math.random() * 530) + 100;
   }
 
   draw(ctx) {
@@ -500,7 +505,7 @@ class Alien {
     this.draw = this.draw.bind(this);
     this.drawBullets = this.drawBullets.bind(this);
     this.removeBullets = this.removeBullets.bind(this);
-    this.xCoord = 570;
+    this.xCoord = 590;
     this.yCoord = 100;
     this.createBullet(ctx,playerX,playerY);
   }
@@ -558,7 +563,7 @@ let Token = __webpack_require__(2);
 class Bullet extends Token {
   constructor(ctx,points,type,xCoord,yCoord,playerX,playerY) {
     super(ctx,points,type);
-    this.xCoord = 570;
+    this.xCoord = 595;
     this.yCoord = 127;
     this.decrementX = (this.xCoord - playerX)/15;
     this.decrementY = (this.yCoord - playerY)/15;
@@ -577,12 +582,9 @@ class Bullet extends Token {
   }
 
   startOver(playerX,playerY) {
-    // console.log(`${playerY}`);
     if(this.xCoord < playerX-10 || this.yCoord > playerY +80) {
-      this.xCoord = 580;
+      this.xCoord = 595;
       this.yCoord = 127;
-      // console.log(`${playerY} playerY`);
-      // console.log(this.xCoord);
       this.decrementX = (this.xCoord - playerX)/15;
       this.decrementY = (this.yCoord - playerY)/15;
     }

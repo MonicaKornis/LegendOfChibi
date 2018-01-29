@@ -101,9 +101,12 @@ class Game {
     this.setEventListeners();
     this.difficulty = 2;
     this.aliens = [];
-    this.fps = 30;
+    // this.fps = 30;
     this.now;
+    this.fps = 30;
+    // this.catDate = Date.now();
     this.then = Date.now();
+    // this.catInterval = 1000/this.fps;
     this.interval = 3500/this.fps;
     this.delta;
   }
@@ -152,15 +155,12 @@ class Game {
         this.alien.bullets[i].yCoord >= this.player.centerY-20 && this.alien.bullets[i].yCoord  <= this.player.centerY + 20){
           this.player.points -= 5;
           console.log('WAHH');
-          // this.renderExplosion();
-
       }
     }
   }
 
   renderExplosion() {
     for (let i = 0; i < 9; i++) {
-      // debugger
       let width = 970/8;
       let heigth = 90;
       this.gameCtx.drawImage(this.explosion, i, width*i,
@@ -226,12 +226,18 @@ class Game {
     e.preventDefault();
     if(e.code === 'ArrowDown') {
       this.player.moveDown(this.gameCtx);
+      this.catSmoothMovement();
     } else if (e.code === 'ArrowUp') {
       this.player.moveUp(this.gameCtx);
+      this.catSmoothMovement();
+      // this.player.draw(this.gameCtx);
     } else if (e.code === 'ArrowLeft') {
       this.player.moveBack(this.gameCtx);
+      this.catSmoothMovement();
+      // this.player.draw(this.gameCtx);
     } else if (e.code === 'ArrowRight') {
       this.player.moveFront(this.gameCtx);
+      this.catSmoothMovement();
     }
     this.playerRecievePoints();
   }
@@ -241,17 +247,22 @@ class Game {
     window.addEventListener('keydown', this.restart);
   }
 
+  catSmoothMovement() {
+      this.gameCtx.clearRect(0, 0, 720, 770);
+      this.draw();
+  }
+
   start(ctx) {
     requestAnimationFrame(this.start);
     let now = Date.now();
     this.delta = now - this.then;
+    // this.catDelta = now - this.then
     this.alien.draw(this.gameCtx,this.player.centerX,this.player.centerY);
     if (this.delta > this.interval) {
         this.gameCtx.clearRect(0, 0, 720, 770);
         this.renderBackground(this.backgroundCtx);
-        this.draw(this.gameCtx);
-        this.renderTokens(this.gameCtx);
         this.then = now - (this.delta % this.interval);
+        this.draw(this.gameCtx);
       }
     this.createMoreTokens();
     this.gameOver();
@@ -260,6 +271,7 @@ class Game {
 
   draw() {
     this.player.draw(this.gameCtx);
+    this.renderTokens(this.gameCtx);
     this.playerRecievePoints();
     this.filterTokens();
     this.gameCtx.font = `40px sans-serif`;
@@ -296,26 +308,26 @@ class Player {
 
   moveDown(ctx) {
     if (this.centerY < 560) {
-    this.centerY += 35;
+    this.centerY += 25;
     }
   }
 
   moveUp(ctx) {
     if (this.centerY > 30) {
-    this.centerY -= 35;
+    this.centerY -= 25;
     }
   }
 
   moveBack(ctx) {
     if (this.centerX > 40) {
-    this.centerX -= 35;
+    this.centerX -= 25;
     }
     console.log(this.centerX);
   }
 
   moveFront(ctx) {
     if (this.centerX < 600) {
-    this.centerX += 35;
+    this.centerX += 25;
     }
   }
 

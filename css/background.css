@@ -49,8 +49,8 @@ body {
     color: white;
     position: relative;
     text-decoration: none;
-    bottom: -54px;
-    right: 3px;
+    /* bottom: -54px;
+    right: 3px; */
     font-size: 14px;
   }
    .github-title{
@@ -81,8 +81,8 @@ body {
     color: white;
     position: relative;
     text-decoration: none;
-    bottom: -54px;
-    right: 3px;
+    /* bottom: -54px;
+    right: 3px; */
     font-size: 14px;
   }
    .github-title{
@@ -106,8 +106,8 @@ body {
     color: white;
     position: relative;
     text-decoration: none;
-    bottom: -54px;
-    right: 3px;
+    /* bottom: -54px;
+    right: 3px; */
     font-size: 14px;
   }
    .github-title{
@@ -137,8 +137,8 @@ body {
     color: white;
     position: relative;
     text-decoration: none;
-    bottom: -54px;
-    right: 3px;
+    /* bottom: -54px;
+    right: 3px; */
     font-size: 14px;
   }
    .github-title{
@@ -169,8 +169,8 @@ body {
     color: white;
     position: relative;
     text-decoration: none;
-    bottom: -54px;
-    right: 3px;
+    /* bottom: -54px;
+    right: 3px; */
     font-size: 14px;
   }
    .github-title{
@@ -194,20 +194,20 @@ body {
     justify-content: space-between;
     padding-left: 57px;
     color: white;
-    margin-top: 6%;
-    margin-right: 36.5%;
+    margin-top: 7%;
+    margin-right: 37.5%;
   }
   a {
     color: white;
     position: relative;
     text-decoration: none;
-    bottom: -54px;
-    right: 3px;
-    font-size: 14px;
+    /* bottom: -54px;
+    right: 3px; */
+    font-size: 20px;
   }
-   .github-title{
+   /* .github-title{
     right: -3px;
-  }
+  } */
   img {
       border: 1px solid #ddd;
       border-radius: 4px;
@@ -217,38 +217,31 @@ body {
     }
 }
 
-/* .linkedin-title {
-
-} */
-
-.github {
-  /* background: url('github.png'); */
-  padding-right: 10px;
-  background-repeat: no-repeat;
-}
-
-
-.angellist {
-  /* background: url('angelist.png'); */
-  padding-right: 10px;
-  background-repeat: no-repeat;
-}
-
-.linkedin {
-  /* background: url('linkedin.png'); */
-  padding-right: 10px;
-  background-repeat: no-repeat;
-}
-
-.personal-site {
-  padding-right: 10px;
-  background-repeat: no-repeat;
-}
-
-.personal-site .linkedin .angellist .github {
-  padding-right: 10px;
-}
 
 audio {
    display:none;
+}
+
+#personal-title {
+  padding-top: 6px;
+}
+
+#linkedin-title {
+  padding-top: 7px;
+}
+
+.linkedin {
+  padding-left: 18px;
+}
+
+.github {
+  padding-left: 18px;
+}
+
+#github-title {
+  padding-top: 5px;
+}
+
+#angel-title {
+  padding-top: 5px;
 }

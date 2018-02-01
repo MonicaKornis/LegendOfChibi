@@ -205,15 +205,15 @@ class Game {
     if(this.player.points <= 0) {
       this.gameCtx.font = `55px sans-serif`;
       let gradient = this.gameCtx.createLinearGradient(0,0,this.gameCanvas.width,0);
-      gradient.addColorStop("0","magenta");
-      gradient.addColorStop("0.5","yellow");
-      gradient.addColorStop("1.0","orange");
-      this.gameCtx.fillStyle = gradient;
-      this.gameCtx.clearRect(0,0,720,770);
-      this.gameCtx.fillText('Game Over', 230, 310);
-      this.gameCtx.font = `35px sans-serif`;
-      this.gameCtx.fillText(`Total Tokens Collected: ${this.totalTokens}` ,168, 370);
-      this.gameCtx.fillText('Press Space To Play Again', 160, 430);
+        gradient.addColorStop("0","magenta");
+        gradient.addColorStop("0.5","yellow");
+        gradient.addColorStop("1.0","orange");
+        this.gameCtx.fillStyle = gradient;
+        this.gameCtx.clearRect(0,0,720,770);
+        this.gameCtx.fillText('Game Over', 230, 310);
+        this.gameCtx.font = `35px sans-serif`;
+        this.gameCtx.fillText(`Total Tokens Collected: ${this.totalTokens}` ,168, 370);
+        this.gameCtx.fillText('Press Space To Play Again', 160, 430);
     }
   }
 
@@ -253,6 +253,11 @@ class Game {
     this.playerRecievePoints();
   }
 
+  pause() {
+
+  }
+
+
   setEventListeners() {
     window.addEventListener('keydown', this.move);
     window.addEventListener('keydown', this.restart);
@@ -268,7 +273,6 @@ class Game {
       this.theme.play();
       this.zap.play();
       this.zap.volume = 0.5;
-      this.coin.play();
       this.coin.volume = 0.5;
     } else {
       this.theme.pause();

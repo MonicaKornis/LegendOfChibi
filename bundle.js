@@ -79,6 +79,16 @@ class Game {
     this.heart.src = './images/heart.png';
     this.explosion = new Image();
     this.explosion.src = './images/explosion.png';
+
+    this.theme = document.getElementById("theme");
+    this.muted = true;
+
+    this.coin = document.getElementById('coin');
+    this.meow = document.getElementById('meow');
+    this.zap = document.getElementById('zap');
+
+    // this.playSounds = this.playSounds.bind(this);
+
     this.alien = new Alien(this.gameCtx,this.player.centerX, this.player.centerY);
     this.tokens = [];
     this.gameCtx = gameCtx;
@@ -130,16 +140,18 @@ class Game {
 
 
   playerRecievePoints() {
-    for (var i = 0; i < this.tokens.length; i++) {
+    for (var i = 0; i < this.tokens.length-1; i++) {
         if((this.tokens[i].xCoord >= this.player.centerX && this.tokens[i].xCoord <= this.player.centerX + 50) &&
            (this.tokens[i].yCoord >= this.player.centerY && this.tokens[i].yCoord <= this.player.centerY + 50))
             {
           console.log('WEEE');
-          console.log(`${this.tokens[i].points}`);
+          // console.log(`${this.tokens[i].points}`);
           this.player.points += this.tokens[i].points;
+          this.coin.play();
           this.tokens = this.tokens.filter((currentToken) => currentToken.yCoord != this.tokens[i].yCoord);
 
           if(this.tokens[i].type === 'token') {
+            if(!this.muted) this.coin.play();
             this.printHeart();
             this.totalTokens += 1;
           }
@@ -153,8 +165,11 @@ class Game {
         this.alien.bullets[i].yCoord >= this.player.centerY-20 && this.alien.bullets[i].yCoord  <= this.player.centerY + 20){
           this.player.points -= 5;
           console.log('WAHH');
+          if(!this.muted) this.zap.play();
+
       }
     }
+
   }
 
   renderExplosion() {
@@ -241,7 +256,26 @@ class Game {
   setEventListeners() {
     window.addEventListener('keydown', this.move);
     window.addEventListener('keydown', this.restart);
+    window.addEventListener('keydown', this.toggleSound);
   }
+
+  toggleSound(e) {
+    if(e.keyCode === 77) {
+      this.muted = !this.muted;
+    }
+
+    if(this.muted === false ) {
+      this.theme.play();
+      this.zap.play();
+      this.zap.volume = 0.5;
+      this.coin.play();
+      this.coin.volume = 0.5;
+    } else {
+      this.theme.pause();
+      this.zap.pause();
+    }
+  }
+
 
   catSmoothMovement() {
       this.gameCtx.clearRect(0, 0, 720, 770);
@@ -524,7 +558,7 @@ class Alien {
   }
 
   removeBullets(ctx) {
-    // debugger
+    //
     this.bullets.forEach((bullet) => {
       if(bullet.xCoord < 4) {
         this.bullets = this.bullets.filter((bullet) => bullet.xCoord > 4);
@@ -604,7 +638,7 @@ class Bullet extends Token {
   draw(ctx,playerX,playerY) {
     this.offCenter(ctx);
     this.offCenterStartOver(playerX,playerY);
-    console.log(`${this.xCoord} x ${this.yCoord} y`);
+    // console.log(`${this.xCoord} x ${this.yCoord} y`);
     ctx.fillColor = 'yellow';
     ctx.beginPath();
     ctx.arc(this.xCoord,this.yCoord,3,0,1.5*Math.PI);

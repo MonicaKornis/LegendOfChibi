@@ -87,9 +87,9 @@ class Game {
     this.meow = document.getElementById('meow');
     this.zap = document.getElementById('zap');
 
-    // this.playSounds = this.playSounds.bind(this);
 
-    this.alien = new Alien(this.gameCtx,this.player.centerX, this.player.centerY);
+    this.alienDifficulty = 0;
+    this.alien = new Alien(this.gameCtx,this.player.centerX, this.player.centerY, this.alienDifficulty);
     this.tokens = [];
     this.gameCtx = gameCtx;
     this.totalTokens = 0;
@@ -107,9 +107,12 @@ class Game {
     this.createTokens = this.createTokens.bind(this);
     this.playerLoosePoints = this.playerLoosePoints.bind(this);
     this.playerRecievePoints = this.playerRecievePoints.bind(this);
-    this.createTokens(6);
+    this.tokenAmmount = 17;
+    this.createTokens(this.tokenAmmount);
     this.setEventListeners();
     this.difficulty = 2;
+    this.raiseDifficulty = this.raiseDifficulty.bind(this);
+
     this.aliens = [];
 
     this.now;
@@ -135,6 +138,7 @@ class Game {
         this.tokens.push( new Token(this.gameCtx, points*2, 'token'));
       }
     }
+    this.tokenAmmount -= 1;
     this.difficulty += 2;
   }
 
@@ -145,7 +149,7 @@ class Game {
            (this.tokens[i].yCoord >= this.player.centerY && this.tokens[i].yCoord <= this.player.centerY + 50))
             {
           console.log('WEEE');
-          // console.log(`${this.tokens[i].points}`);
+
           this.player.points += this.tokens[i].points;
           this.coin.play();
           this.tokens = this.tokens.filter((currentToken) => currentToken.yCoord != this.tokens[i].yCoord);
@@ -197,7 +201,15 @@ class Game {
 
   createMoreTokens() {
     if(this.tokens.length < 6 ) {
-      this.createTokens(5);
+      this.createTokens(this.tokenAmmount);
+      this.raiseDifficulty();
+    }
+  }
+
+  raiseDifficulty() {
+    if(this.player.points > this.alienDifficulty * 20/1.5) {
+      // debugger
+      this.alien.difficulty += 1;
     }
   }
 
@@ -262,6 +274,7 @@ class Game {
     window.addEventListener('keydown', this.move);
     window.addEventListener('keydown', this.restart);
     window.addEventListener('keydown', this.toggleSound);
+    window.addEventListener('keydown', this.pause);
   }
 
   toggleSound(e) {
@@ -535,7 +548,7 @@ module.exports = Background;
 let Bullet = __webpack_require__(6);
 
 class Alien {
-  constructor(ctx,playerX,playerY) {
+  constructor(ctx,playerX,playerY,difficulty) {
     this.alienSheet = new Image();
     this.bullets = [];
     this.alienSheet.src = './images/alien.png';
@@ -548,11 +561,15 @@ class Alien {
     this.removeBullets = this.removeBullets.bind(this);
     this.xCoord = 590;
     this.yCoord = 100;
-    this.createBullet(ctx,playerX,playerY);
+    this.difficulty = difficulty;
+    // console.log(this.difficulty);
+    this.createBullet(ctx,playerX,playerY,this.difficulty);
+
   }
 
-  createBullet(ctx,playerX,playerY) {
-    this.bullets.push( new Bullet(ctx,-5,'bullet',this.xCoord,this.yCoord,playerX,playerY));
+  createBullet(ctx,playerX,playerY,difficulty) {
+    // console.log(this.difficulty);
+    this.bullets.push( new Bullet(ctx,-5,'bullet',this.xCoord,this.yCoord,playerX,playerY,this.difficulty));
   }
 
   drawBullets(ctx,playerX,playerY) {
@@ -585,7 +602,7 @@ class Alien {
       } else {
         this.frame = 0;
       }
-      window.setTimeout(this.drawBullets(ctx,playerX,playerY), 100000);
+      setTimeout(this.drawBullets(ctx,playerX,playerY), 100000);
       this.removeBullets(ctx);
     }
 
@@ -602,46 +619,47 @@ module.exports = Alien;
 let Token = __webpack_require__(2);
 
 class Bullet extends Token {
-  constructor(ctx,points,type,xCoord,yCoord,playerX,playerY) {
+  constructor(ctx,points,type,xCoord,yCoord,playerX,playerY,difficulty) {
     super(ctx,points,type);
     this.ctx = ctx;
     this.xCoord = 595;
     this.yCoord = 127;
+    this.offsets = [60,50,40,30,20,15];
+    this.difficulty = difficulty;
 
     this.offXCord = 595;
     this.offyCoord = 127;
+    this.decrementX = (this.xCoord - playerX) + this.offsets[this.difficulty] / 15;
+    this.decrementY = (this.yCoord - playerY) + this.offsets[this.difficulty]/ 15;
 
-    this.decrementX = (this.xCoord - playerX)/15;
-    this.decrementY = (this.yCoord - playerY)/15;
-
-    this.offCenterX = (this.xCoord - playerX+.2)/15;
-    this.offCenterY = (this.yCoord - playerY+.2)/15;
-    this.offCenter = this.offCenter.bind(this);
+    // this.offCenterX = (this.xCoord - playerX+.2)/15;
+    // this.offCenterY = (this.yCoord - playerY+.2)/15;
+    // this.offCenter = this.offCenter.bind(this);
   }
 
-  offCenter(ctx) {
-    ctx.fillColor = 'yellow';
-    ctx.beginPath();
-    ctx.arc(this.xCoord,this.yCoord,3,0,1.5*Math.PI);
-    ctx.closePath();
-    ctx.fill();
-
-    this.offXCord -= this.offCenterX;
-    this.offyCoord -= this.offCenterY;
-  }
+  // offCenter(ctx) {
+  //   ctx.fillColor = 'yellow';
+  //   ctx.beginPath();
+  //   ctx.arc(this.xCoord,this.yCoord,3,0,1.5*Math.PI);
+  //   ctx.closePath();
+  //   ctx.fill();
+  //
+  //   this.offXCord -= this.offCenterX;
+  //   this.offyCoord -= this.offCenterY;
+  // }
 
   offCenterStartOver(playerX,playerY) {
     if(this.offCenterX < playerX-10 || this.offCenterY > playerY +80) {
       this.offCenterX = 595;
       this.offCenterY = 127;
-      this.decrementX = (this.offCenterX - playerX)/15;
-      this.decrementY = (this.offCenterY - playerY)/15;
+      this.decrementX = (this.offCenterX - playerX)/20;
+      this.decrementY = (this.offCenterY - playerY)/20;
     }
   }
 
   draw(ctx,playerX,playerY) {
-    this.offCenter(ctx);
-    this.offCenterStartOver(playerX,playerY);
+    // this.offCenter(ctx);
+    // this.offCenterStartOver(playerX,playerY);
     // console.log(`${this.xCoord} x ${this.yCoord} y`);
     ctx.fillColor = 'yellow';
     ctx.beginPath();
@@ -674,6 +692,7 @@ class Bullet extends Token {
       this.xCoord = 595;
       this.yCoord = 127;
     }
+    console.log(this.difficulty);
 
   }
 }

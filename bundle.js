@@ -101,12 +101,10 @@ class Game {
     this.setEventListeners();
     this.difficulty = 2;
     this.aliens = [];
-    // this.fps = 30;
+
     this.now;
     this.fps = 30;
-    // this.catDate = Date.now();
     this.then = Date.now();
-    // this.catInterval = 1000/this.fps;
     this.interval = 3500/this.fps;
     this.delta;
   }
@@ -124,7 +122,7 @@ class Game {
         }
 
       } else {
-        this.tokens.push( new Token(this.gameCtx, points*3, 'token'));
+        this.tokens.push( new Token(this.gameCtx, points*2, 'token'));
       }
     }
     this.difficulty += 2;
@@ -230,11 +228,9 @@ class Game {
     } else if (e.code === 'ArrowUp') {
       this.player.moveUp(this.gameCtx);
       this.catSmoothMovement();
-      // this.player.draw(this.gameCtx);
     } else if (e.code === 'ArrowLeft') {
       this.player.moveBack(this.gameCtx);
       this.catSmoothMovement();
-      // this.player.draw(this.gameCtx);
     } else if (e.code === 'ArrowRight') {
       this.player.moveFront(this.gameCtx);
       this.catSmoothMovement();
@@ -256,7 +252,6 @@ class Game {
     requestAnimationFrame(this.start);
     let now = Date.now();
     this.delta = now - this.then;
-    // this.catDelta = now - this.then
     this.alien.draw(this.gameCtx,this.player.centerX,this.player.centerY);
     if (this.delta > this.interval) {
         this.gameCtx.clearRect(0, 0, 720, 770);
@@ -282,7 +277,6 @@ class Game {
     this.gameCtx.fillStyle = gradient;
     this.gameCtx.fillText(`Life points: ${this.player.points}   Tokens Collected: ${this.totalTokens}`, 20, 50);
   }
-
 
 }
 
@@ -390,15 +384,11 @@ document.addEventListener('DOMContentLoaded', () => {
   let backgroundCanvas = document.getElementById('background-canvas');
   let backgroundCtx = backgroundCanvas.getContext('2d');
   let gameCtx = gameCanvas.getContext('2d');
-  // let img = new Image();
-  // img.src = './images/potions2.png';
+
   const start = new Start(document,gameCtx, backgroundCtx, gameCanvas, backgroundCanvas);
   start.message();
   start.play();
 
-  // const game = new Game(gameCtx, backgroundCtx, gameCanvas, backgroundCanvas);
-  //
-  // game.start();
 });
 
 class Start {
@@ -409,6 +399,7 @@ class Start {
     this.gameCanvas = gameCanvas;
     this.backgroundCanvas = backgroundCanvas;
     this.playing = false;
+
   }
 
   message() {
@@ -550,16 +541,14 @@ class Alien {
     ctx.clearRect(400,500, this.frameWidth, this.frameHeight);
       ctx.drawImage(this.alienSheet,this.width*this.frame,0,
       this.width, this.height, this.xCoord,this.yCoord,this.width, this.height);
+
       if(this.frame < 3) {
         this.frame += 1;
       } else {
         this.frame = 0;
       }
-      window.setTimeout(this.drawBullets(ctx,playerX,playerY), 1000);
-
-      // this.drawBullets(ctx,playerX,playerY);
+      window.setTimeout(this.drawBullets(ctx,playerX,playerY), 100000);
       this.removeBullets(ctx);
-      // console.log(`${this.xCoord,this.yCoord}`);
     }
 
 
@@ -577,13 +566,45 @@ let Token = __webpack_require__(2);
 class Bullet extends Token {
   constructor(ctx,points,type,xCoord,yCoord,playerX,playerY) {
     super(ctx,points,type);
+    this.ctx = ctx;
     this.xCoord = 595;
     this.yCoord = 127;
+
+    this.offXCord = 595;
+    this.offyCoord = 127;
+
     this.decrementX = (this.xCoord - playerX)/15;
     this.decrementY = (this.yCoord - playerY)/15;
+
+    this.offCenterX = (this.xCoord - playerX+.2)/15;
+    this.offCenterY = (this.yCoord - playerY+.2)/15;
+    this.offCenter = this.offCenter.bind(this);
+  }
+
+  offCenter(ctx) {
+    ctx.fillColor = 'yellow';
+    ctx.beginPath();
+    ctx.arc(this.xCoord,this.yCoord,3,0,1.5*Math.PI);
+    ctx.closePath();
+    ctx.fill();
+
+    this.offXCord -= this.offCenterX;
+    this.offyCoord -= this.offCenterY;
+  }
+
+  offCenterStartOver(playerX,playerY) {
+    if(this.offCenterX < playerX-10 || this.offCenterY > playerY +80) {
+      this.offCenterX = 595;
+      this.offCenterY = 127;
+      this.decrementX = (this.offCenterX - playerX)/15;
+      this.decrementY = (this.offCenterY - playerY)/15;
+    }
   }
 
   draw(ctx,playerX,playerY) {
+    this.offCenter(ctx);
+    this.offCenterStartOver(playerX,playerY);
+    console.log(`${this.xCoord} x ${this.yCoord} y`);
     ctx.fillColor = 'yellow';
     ctx.beginPath();
     ctx.arc(this.xCoord,this.yCoord,3,0,1.5*Math.PI);
@@ -592,6 +613,13 @@ class Bullet extends Token {
 
     this.xCoord -= this.decrementX;
     this.yCoord -= this.decrementY;
+
+    if (this.xCoord > 680 || this.yCoord < 0) {
+       this.xCoord = 595;
+       this.yCoord = 127;
+       this.decrementX = (this.xCoord - playerX)/15;
+       this.decrementY = (this.yCoord - playerY)/15;
+     }
     this.startOver(playerX,playerY);
   }
 
@@ -601,7 +629,14 @@ class Bullet extends Token {
       this.yCoord = 127;
       this.decrementX = (this.xCoord - playerX)/15;
       this.decrementY = (this.yCoord - playerY)/15;
+    } else if (playerX === 595 && playerY === 127) {
+      this.xCoord = 595;
+      this.yCoord = 127;
+    } else if (playerX > 595 && playerY < 127) {
+      this.xCoord = 595;
+      this.yCoord = 127;
     }
+
   }
 }
 

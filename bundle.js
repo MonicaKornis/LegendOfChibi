@@ -491,7 +491,7 @@ class Start {
 
     // this.gameCtx.fillText('Press M to toggle sound.', 217, 533);
     this.gameCtx.font = '33px Inconsolata';
-    this.gameCtx.fillText('Press M to Toggle Sound and Space To Begin.', 70, 590);
+    this.gameCtx.fillText('Press M to Toggle Sound and Space To Begin.', 67, 590);
 
   }
 

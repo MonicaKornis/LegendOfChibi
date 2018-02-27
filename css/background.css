@@ -132,7 +132,7 @@ body {
 
   .contact-links {
     width: 470px;
-    margin: 0 auto 0 30%;
+    margin: -22px auto 0 30%;
 
   }
 
@@ -143,25 +143,7 @@ body {
 
 }
 
-/* @media (max-width: 1900) {
-  #canvas-elements {
-    transform: scale(0.75);
-    margin-left: 29%;
-    margin-right: 90%;
-    margin-top: -8%;
-  }
 
-  .contact-links {
-    width: 470px;
-    margin: 0 auto 0 30%;
-  }
-
-  .contact-links img {
-    width: 40px;
-    height: 40px;
-  }
-
-} */
 
  @media (min-width: 1601px) {
   #canvas-elements {

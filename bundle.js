@@ -79,6 +79,7 @@ class Game {
     this.heart.src = './images/heart.png';
     this.explosion = new Image();
     this.explosion.src = './images/explosion.png';
+    this.isGameOver = false;
 
     this.theme = document.getElementById("theme");
     this.muted = true;
@@ -107,7 +108,7 @@ class Game {
     this.createTokens = this.createTokens.bind(this);
     this.playerLoosePoints = this.playerLoosePoints.bind(this);
     this.playerRecievePoints = this.playerRecievePoints.bind(this);
-    this.tokenAmmount = 17;
+    this.tokenAmmount = 6;
     this.createTokens(this.tokenAmmount);
     this.setEventListeners();
     this.difficulty = 2;
@@ -127,6 +128,7 @@ class Game {
   }
 
   createTokens(num) {
+    // if(!this.isGameOver) {
     for (let points = 0; points < num; points++) {
       if(points === 0) {
 
@@ -140,6 +142,7 @@ class Game {
     }
     this.tokenAmmount -= 1;
     this.difficulty += 2;
+    // }
   }
 
 
@@ -164,6 +167,7 @@ class Game {
   }
 
   playerLoosePoints() {
+    if(!this.isGameOver) {
     for (var i = 0; i < this.alien.bullets.length; i++) {
       if(this.alien.bullets[i].xCoord >= this.player.centerX-20 && this.alien.bullets[i].xCoord <= this.player.centerX + 20 &&
         this.alien.bullets[i].yCoord >= this.player.centerY-20 && this.alien.bullets[i].yCoord  <= this.player.centerY + 20){
@@ -173,6 +177,7 @@ class Game {
 
       }
     }
+  }
 
   }
 
@@ -200,21 +205,21 @@ class Game {
   }
 
   createMoreTokens() {
-    if(this.tokens.length < 6 ) {
+
+    if(this.tokens.length < 10 && !this.isGameOver) {
       this.createTokens(this.tokenAmmount);
-      this.raiseDifficulty();
     }
   }
 
   raiseDifficulty() {
     if(this.player.points > this.alienDifficulty * 20/1.5) {
-      // debugger
       this.alien.difficulty += 1;
     }
   }
 
   gameOver(e) {
     if(this.player.points <= 0) {
+      this.isGameOver = true;
       this.gameCtx.font = `55px sans-serif`;
       let gradient = this.gameCtx.createLinearGradient(0,0,this.gameCanvas.width,0);
         gradient.addColorStop("0","magenta");
@@ -232,15 +237,24 @@ class Game {
   restart(e) {
     e.preventDefault();
     if(e.keyCode === 32) {
-    this.player.points = 20;
+      debugger
+    this.playerRestart();
     this.tokens = [];
+    // console.log(this.tokens);
     this.totalTokens = 0;
-    this.createTokens(12);
+    this.tokenAmmount =6;
+    this.createTokens(6);
     this.gameCtx.clearRect(0, 0, 690, 770);
-    this.player.centerY = 550;
-    this.player.centerX = 100;
+    this.alien = new Alien(this.gameCtx,this.player.centerX, this.player.centerY, this.alienDifficulty);
     this.difficulty = 2;
+    this.isGameOver = false;
     }
+  }
+
+  playerRestart() {
+    this.player.points = 20;
+    this.player.centerX = 100;
+    this.player.centerY = 550;
   }
 
   filterTokens() {
@@ -316,6 +330,7 @@ class Game {
   }
 
   draw() {
+    if(!this.isGameOver) {
     this.player.draw(this.gameCtx);
     this.renderTokens(this.gameCtx);
     this.playerRecievePoints();
@@ -327,8 +342,8 @@ class Game {
     gradient.addColorStop("1.0","red");
     this.gameCtx.fillStyle = gradient;
     this.gameCtx.fillText(`Life points: ${this.player.points}   Tokens Collected: ${this.totalTokens}`, 20, 50);
+    }
   }
-
 }
 
 module.exports = Game;
@@ -367,7 +382,6 @@ class Player {
     if (this.centerX > 40) {
     this.centerX -= 25;
     }
-    console.log(this.centerX);
   }
 
   moveFront(ctx) {
@@ -467,27 +481,26 @@ class Start {
     this.gameCtx.fillText('potions in the Egyptian desert. However, you must watch', 83, 240);
     this.gameCtx.fillText('out for the malicious aliens who will try to steal your life',86, 280);
     this.gameCtx.fillText('points!! The game ends when you are out of life points.',87, 320);
-    // this.gameCtx.drawImage(this.img, 270,270,this.img.naturalWidth, this.img.naturalHeight);
+
     this.gameCtx.font = '20px Inconsolata';
     this.gameCtx.fillStyle = '#cce6ff';
     this.gameCtx.font = '28px Inconsolata';
     this.gameCtx.fillText('Use the up and down arrows to collect tokens.', 106, 405);
     this.gameCtx.fillText('Just make sure to watch out for the death orbs!', 107, 453);
+    // this.gameCtx.fillText('Press M to toggle sound.', 147, 553);
 
-    this.gameCtx.font = '41px Inconsolata';
-    this.gameCtx.fillText('Press Space To Begin', 190, 590);
+    // this.gameCtx.fillText('Press M to toggle sound.', 217, 533);
+    this.gameCtx.font = '33px Inconsolata';
+    this.gameCtx.fillText('Press M to Toggle Sound and Space To Begin.', 70, 590);
 
   }
 
 
   play(playing) {
-    // this.document.getElementById("music").style.visibility = "hidden";
     this.document.addEventListener('keypress', (e) => {
-      // enter to play again, but disable once a round starts
       e.preventDefault();
       if (e.keyCode === 32 && !this.playing) {
         this.playing = true;
-        // return new Game(this.document, this.ctx, this.playing, this.initialized);
         this.gameCtx.clearRect(0, 0, 720, 740);
         const game = new Game(this.gameCtx, this.backgroundCtx, this.gameCanvas, this.backgroundCanvas);
         game.start();
@@ -568,7 +581,6 @@ class Alien {
   }
 
   createBullet(ctx,playerX,playerY,difficulty) {
-    // console.log(this.difficulty);
     this.bullets.push( new Bullet(ctx,-5,'bullet',this.xCoord,this.yCoord,playerX,playerY,this.difficulty));
   }
 
@@ -631,36 +643,10 @@ class Bullet extends Token {
     this.offyCoord = 127;
     this.decrementX = (this.xCoord - playerX) + this.offsets[this.difficulty] / 15;
     this.decrementY = (this.yCoord - playerY) + this.offsets[this.difficulty]/ 15;
-
-    // this.offCenterX = (this.xCoord - playerX+.2)/15;
-    // this.offCenterY = (this.yCoord - playerY+.2)/15;
-    // this.offCenter = this.offCenter.bind(this);
-  }
-
-  // offCenter(ctx) {
-  //   ctx.fillColor = 'yellow';
-  //   ctx.beginPath();
-  //   ctx.arc(this.xCoord,this.yCoord,3,0,1.5*Math.PI);
-  //   ctx.closePath();
-  //   ctx.fill();
-  //
-  //   this.offXCord -= this.offCenterX;
-  //   this.offyCoord -= this.offCenterY;
-  // }
-
-  offCenterStartOver(playerX,playerY) {
-    if(this.offCenterX < playerX-10 || this.offCenterY > playerY +80) {
-      this.offCenterX = 595;
-      this.offCenterY = 127;
-      this.decrementX = (this.offCenterX - playerX)/20;
-      this.decrementY = (this.offCenterY - playerY)/20;
-    }
   }
 
   draw(ctx,playerX,playerY) {
-    // this.offCenter(ctx);
-    // this.offCenterStartOver(playerX,playerY);
-    // console.log(`${this.xCoord} x ${this.yCoord} y`);
+
     ctx.fillColor = 'yellow';
     ctx.beginPath();
     ctx.arc(this.xCoord,this.yCoord,3,0,1.5*Math.PI);

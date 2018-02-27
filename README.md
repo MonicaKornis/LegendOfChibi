@@ -23,8 +23,3 @@
  * beam.js - handles logic for creating ufo lazer beams and their projectile motion.  
  * game.js - handles logic for game start and end
  * index.js - instantiates Game class
-
-## Implementation Timeline
- * Day 1: Review HTML5/Canvas documentation, create display and player classes. Implement controls for player interaction.
- * Day 2: Implement logic for ship,beam, and token classes.
- * Day 3: Create game and index classes.
